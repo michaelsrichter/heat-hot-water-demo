@@ -15,6 +15,20 @@ This template ships `docs/` pre-structured but mostly empty — `/new-demo`
 sections for parts the demo doesn't use; write a line explaining why it's
 not applicable instead, so the map stays complete.
 
+## Served HTML guides
+
+The frontend build generates these public pages from this folder and the current
+source files:
+
+| Page | Purpose |
+|---|---|
+| [Azure architecture](/docs/architecture.html) | data path, Azure services, and Strategy boundary |
+| [Foundry integration](/docs/foundry-integration.html) | hosted agent and planned Strategy MCP path |
+| [Strategy interface views](/docs/strategy-screenshots.html) | model, dashboard, and refresh rebuilds |
+| [Security and networking](/docs/security-networking.html) | identity, data, secrets, and known network gaps |
+| [Azure and AI costs](/docs/azure-ai-costs.html) | current cost drivers and scale measures |
+| [Code tour](/docs/code-tour.html) | source-extracted request and Foundry response path |
+
 ## Map
 
 | Area | Contents |

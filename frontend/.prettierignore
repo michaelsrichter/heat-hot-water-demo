@@ -1,2 +1,5 @@
+.impeccable/**
+coverage/**
+dist/**
 public/docs/*.html
 src/generated/**
