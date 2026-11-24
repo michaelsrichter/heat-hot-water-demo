@@ -53,7 +53,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   frontend:
-    if: hashFiles('frontend/package.json') != ''
+    if: ${{ hashFiles('frontend/package.json') != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -75,7 +75,7 @@ jobs:
         working-directory: frontend
 
   backend:
-    if: hashFiles('backend/pyproject.toml') != ''
+    if: ${{ hashFiles('backend/pyproject.toml') != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
