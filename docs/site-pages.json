@@ -130,7 +130,7 @@
           "detail": "Buildings, complaints, violations, and 311 requests."
         },
         {
-          "label": "Shared key",
+          "label": "Model join",
           "value": "building_id",
           "detail": "Connects Borough and Building facts without merging grains."
         },
@@ -154,7 +154,7 @@
       "title": "Security and networking",
       "navLabel": "Security + networking",
       "eyebrow": "Clear boundaries and accepted gaps",
-      "lead": "Azure jobs use Managed Identity. Anonymous storage access is off. The external Strategy connector uses one documented, vaulted Shared Key exception.",
+      "lead": "Azure jobs use Managed Identity. Anonymous storage access and storage shared-key authentication are off. The external Strategy connector stays outside the public repository.",
       "sources": [
         "security/threat-model.md",
         "security/auth.md",
@@ -194,15 +194,15 @@
         "Foundry receives only safe evidence and citations",
         "Public endpoint is rate-limited"
       ],
-      "callout": "The public repository contains no Strategy connector credential. The production operator must apply the organization's approved identity and network controls.",
+      "callout": "Known gap: public Azure endpoints are still in use. Data access requires Microsoft Entra authorization; anonymous Blob access and storage shared-key access stay disabled.",
       "links": [
         {
           "label": "Storage network security",
           "href": "https://learn.microsoft.com/azure/storage/common/storage-network-security"
         },
         {
-          "label": "Key Vault RBAC",
-          "href": "https://learn.microsoft.com/azure/key-vault/general/rbac-guide"
+          "label": "Authorize storage with Microsoft Entra",
+          "href": "https://learn.microsoft.com/azure/storage/blobs/authorize-access-azure-active-directory"
         },
         {
           "label": "Managed identities",

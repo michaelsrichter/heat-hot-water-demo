@@ -341,8 +341,8 @@ Rules:
 <p>The existing request and response shapes do not need to change. Update the code-tour screenshots and this page when the real MCP model is available.</p>
 <h3>7. The rest of the data path</h3>
 <p><code>backend/app/ingest_adls.py</code> reads the three public NYC sources, applies a privacy allowlist, preserves each source grain, and writes four stable Strategy CSV folders plus <code>current/manifest.json</code> and a dated archive.</p>
-<p><code>infra/resources.bicep</code> creates ADLS Gen2 with anonymous access disabled. It uses Managed Identity for Azure jobs. The Strategy connector is the documented Shared Key exception because tenant consent for delegated Storage access is not available.</p>
-<p><code>strategy/mosaic-contract.yaml</code> defines table grains, the shared <code>building_id</code>, the Borough-to-Building hierarchy, distinct-count measures, and the rule version.</p>
+<p><code>infra/resources.bicep</code> creates ADLS Gen2 with anonymous access disabled. It uses Managed Identity for Azure jobs and disables storage shared-key authentication. Any external Strategy connector is configured by the deployment operator outside this public repository.</p>
+<p><code>strategy/mosaic-contract.yaml</code> defines table grains, the shared model key <code>building_id</code>, the Borough-to-Building hierarchy, distinct-count measures, and the rule version.</p>
 <p><code>backend/app/pipeline.py</code> reads the manifest. The frontend renders all seven steps: sources, preparation, storage, Strategy meaning, dashboard, Foundry briefing, and staff review.</p>
 <h3>Tests</h3>
 <p><code>backend/tests/test_adls_ingest.py</code> checks the privacy allowlist, distinct complaint count, building grain, rule state, and seven-step manifest.</p>

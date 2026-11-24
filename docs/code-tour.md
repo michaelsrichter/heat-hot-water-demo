@@ -114,11 +114,12 @@ privacy allowlist, preserves each source grain, and writes four stable Strategy
 CSV folders plus `current/manifest.json` and a dated archive.
 
 `infra/resources.bicep` creates ADLS Gen2 with anonymous access disabled. It
-uses Managed Identity for Azure jobs. The Strategy connector is the documented
-Shared Key exception because tenant consent for delegated Storage access is not
-available.
+uses Managed Identity for Azure jobs and disables storage shared-key
+authentication. Any external Strategy connector is configured by the deployment
+operator outside this public repository.
 
-`strategy/mosaic-contract.yaml` defines table grains, the shared `building_id`,
+`strategy/mosaic-contract.yaml` defines table grains, the shared model key
+`building_id`,
 the Borough-to-Building hierarchy, distinct-count measures, and the rule version.
 
 `backend/app/pipeline.py` reads the manifest. The frontend renders all seven

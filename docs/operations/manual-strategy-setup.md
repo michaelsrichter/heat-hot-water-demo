@@ -54,11 +54,11 @@ The model has four ADLS source tables and uses `Replace existing data` for each.
 
 | Borough | Distinct complaints | Candidate violations |
 |---|---:|---:|
-| Bronx | 8,424 | 1,525 |
-| Brooklyn | 7,238 | 782 |
-| Manhattan | 6,171 | 808 |
-| Queens | 3,383 | 306 |
-| Staten Island | 200 | 35 |
+| Bronx | 10,291 | 1,875 |
+| Brooklyn | 8,860 | 1,086 |
+| Manhattan | 7,650 | 1,080 |
+| Queens | 4,139 | 375 |
+| Staten Island | 249 | 42 |
 
 The dashboard is saved from the ADLS-backed model. Candidate violation totals
 reflect the latest refreshed source snapshot and remain provisional.

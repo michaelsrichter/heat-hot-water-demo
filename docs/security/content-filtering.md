@@ -1,14 +1,19 @@
 # Content filtering
 
-The current Practice build does not call an AI model. It uses fixed templates and
-deterministic facts.
+The live Foundry deployment uses the platform
+`Microsoft.DefaultV2` content-filter policy. The model name and version remain
+in `config/models.json`, not in public UI copy.
 
-Before Foundry is connected:
+Practice mode does not call a model. It returns a fixed briefing shape from
+safe test records.
 
-1. select the model in `config/models.json`;
-2. keep platform content filters on;
-3. bound input, output, tool calls, and retrieval; and
-4. treat document text and tool results as untrusted data.
+The app also:
 
-No exception is active.
+1. accepts saved scenarios instead of arbitrary prompts;
+2. bounds input, output, request rate, and result size;
+3. allows only approved citations in the review request; and
+4. treats document text and tool results as untrusted input.
+
+Content filtering is one control, not proof that every unsafe response will be
+blocked. A staff member still verifies the briefing.
 

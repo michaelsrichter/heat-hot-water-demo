@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Azure jobs use Managed Identity. Anonymous storage access is off. The external Strategy connector uses one documented, vaulted Shared Key exception." />
+    <meta name="description" content="Azure jobs use Managed Identity. Anonymous storage access and storage shared-key authentication are off. The external Strategy connector stays outside the public repository." />
     <meta name="theme-color" content="#edf6fb" />
     <title>Security and networking | HPD Heat &amp; Hot Water</title>
     <link rel="stylesheet" href="/docs/assets.css" />
@@ -27,7 +27,7 @@
         <div class="docs-hero__copy">
           <p class="eyebrow">Clear boundaries and accepted gaps</p>
           <h1>Security and networking</h1>
-          <p class="lead">Azure jobs use Managed Identity. Anonymous storage access is off. The external Strategy connector uses one documented, vaulted Shared Key exception.</p>
+          <p class="lead">Azure jobs use Managed Identity. Anonymous storage access and storage shared-key authentication are off. The external Strategy connector stays outside the public repository.</p>
           <div class="hero-actions">
             <a class="primary-link" href="/">Open live demo</a>
             <a class="secondary-link" href="/docs/">All documentation</a>
@@ -36,7 +36,7 @@
         
     <aside class="docs-hero__aside">
       <span>Current status</span>
-      <strong>The public repository contains no Strategy connector credential. The production operator must apply the organization&#39;s approved identity and network controls.</strong>
+      <strong>Known gap: public Azure endpoints are still in use. Data access requires Microsoft Entra authorization; anonymous Blob access and storage shared-key access stay disabled.</strong>
     </aside>
   
       </section>
@@ -195,7 +195,7 @@
         <h2>Read the service details</h2>
       </div>
       <ul>
-        <li><a href="https://learn.microsoft.com/azure/storage/common/storage-network-security">Storage network security</a></li><li><a href="https://learn.microsoft.com/azure/key-vault/general/rbac-guide">Key Vault RBAC</a></li><li><a href="https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview">Managed identities</a></li>
+        <li><a href="https://learn.microsoft.com/azure/storage/common/storage-network-security">Storage network security</a></li><li><a href="https://learn.microsoft.com/azure/storage/blobs/authorize-access-azure-active-directory">Authorize storage with Microsoft Entra</a></li><li><a href="https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview">Managed identities</a></li>
       </ul>
     </section>
   
