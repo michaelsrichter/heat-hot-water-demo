@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Every source excerpt below comes from the current build. It shows what runs today and what changes when the real Strategy MCP model becomes available." />
+    <meta name="theme-color" content="#edf6fb" />
+    <title>Foundry code tour | HPD Heat &amp; Hot Water</title>
+    <link rel="stylesheet" href="/docs/assets.css" />
+    <script src="/docs/theme.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="docs-header">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">H</span>
+        <span>HPD Heat &amp; Hot Water</span>
+      </a>
+      <nav aria-label="Documentation navigation"><a href="/">Demo</a><a href="/docs/">Docs home</a><a href="/docs/architecture.html">Azure architecture</a><a href="/docs/foundry-integration.html">Foundry integration</a><a href="/docs/strategy-screenshots.html">Strategy views</a><a href="/docs/security-networking.html">Security + networking</a><a href="/docs/azure-ai-costs.html">Azure + AI costs</a><a href="/docs/code-tour.html" aria-current="page">Code tour</a></nav>
+      <button class="theme-button" type="button" data-theme-toggle aria-label="Use dark mode">
+        <span data-theme-label>Dark</span>
+      </button>
+    </header>
+    <div class="demo-banner">NYC housing response demo - not an official city service</div>
+    <main id="main-content" class="docs-main">
+      <section class="docs-hero">
+        <div class="docs-hero__copy">
+          <p class="eyebrow">Follow one review from browser to model</p>
+          <h1>Foundry code tour</h1>
+          <p class="lead">Every source excerpt below comes from the current build. It shows what runs today and what changes when the real Strategy MCP model becomes available.</p>
+          <div class="hero-actions">
+            <a class="primary-link" href="/">Open live demo</a>
+            <a class="secondary-link" href="/docs/">All documentation</a>
+          </div>
+        </div>
+        
+    <aside class="docs-hero__aside">
+      <span>Current status</span>
+      <strong>The current path uses the governed snapshot. The MCP connection is prepared for the next step, but the target model is not exposed yet.</strong>
+    </aside>
+  
+      </section>
+      
+    <section class="fact-grid" aria-label="Key facts">
+      
+            <article class="fact-card">
+              <span>Request type</span>
+              <strong>Saved scenario</strong>
+              <p>The public API does not accept an arbitrary prompt.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>Evidence</span>
+              <strong>Bounded</strong>
+              <p>KPI contract, synthetic records, owner teams, and citations.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>Live output</span>
+              <strong>Cited briefing</strong>
+              <p>The API labels the provider and keeps source links.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>MCP today</span>
+              <strong>Not required</strong>
+              <p>The current UI works from the governed snapshot.</p>
+            </article>
+          
+    </section>
+  
+      
+      
+      
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>code-tour.md</code></div>
+        <h2>Foundry integration code tour</h2>
+<p>The live demo uses two separate jobs.</p>
+<p>Strategy Mosaic defines the numbers. Microsoft Foundry explains the supplied facts and official guidance. A staff member still checks every suggested action.</p>
+<h3>Current path</h3>
+<p>The public review currently uses the hosted Foundry agent with a governed ADLS snapshot. It does not depend on a live Strategy Model Context Protocol (MCP) call.</p>
+<ol><li>The browser sends one saved scenario and one service area.</li><li>The review coordinator creates synthetic building review items.</li><li>The API reads the governed pipeline manifest.</li><li>The API sends the manifest, review items, and citations to Foundry.</li><li>The hosted agent returns a short cited briefing.</li><li>The browser shows the briefing only after the backend receives it.</li></ol>
+<p>The Strategy MCP connection, OAuth consent, and Foundry toolbox exist. The signed-in Strategy user cannot yet see the Heat and Hot Water Review Model. Until that model is exposed, the public page remains on the governed snapshot.</p>
+<h3>1. The browser starts a bounded review</h3>
+<p>The frontend never accepts an arbitrary model prompt. It sends a saved scenario ID, an optional service area, and a random browser session ID.</p>
+
+    <figure class="code-sample">
+      <figcaption>
+        <strong>The browser starts one bounded review</strong>
+        <code>frontend/src/api.ts</code>
+      </figcaption>
+      <pre tabindex="0" aria-label="The browser starts one bounded review"><code data-language="typescript">export async function runReview(
+  scenarioId: string,
+  sessionId: string,
+  serviceArea?: string,
+): Promise&lt;ReviewRun&gt; {
+  return readJson&lt;ReviewRun&gt;(
+    await fetch(&quot;/api/reviews/run&quot;, {
+      method: &quot;POST&quot;,
+      headers: {
+        &quot;Content-Type&quot;: &quot;application/json&quot;,
+        &quot;X-Demo-Session&quot;: sessionId,
+      },
+      body: JSON.stringify({
+        scenario_id: scenarioId,
+        service_area: serviceArea,
+      }),
+    }),
+  );
+}</code></pre>
+    </figure>
+  
+<h3>2. The API joins practice records with Strategy facts</h3>
+<p>The API first creates the review list from the selected saved scenario. It then loads the same pipeline manifest that powers the Strategy KPI cards.</p>
+
+    <figure class="code-sample">
+      <figcaption>
+        <strong>The API combines saved records with the governed manifest</strong>
+        <code>backend/app/main.py</code>
+      </figcaption>
+      <pre tabindex="0" aria-label="The API combines saved records with the governed manifest"><code data-language="python">@app.post(&quot;/api/reviews/run&quot;, response_model=ReviewRun)
+def run_review(payload: ReviewRequest, request: Request) -&gt; ReviewRun:
+    session_id = request.headers.get(&quot;X-Demo-Session&quot;, &quot;&quot;)
+    if len(session_id) &lt; 24 or len(session_id) &gt; 64:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=&quot;A bounded browser session is required.&quot;,
+        )
+    rate_key = f&quot;{request.client.host if request.client else &#39;unknown&#39;}:{session_id}&quot;
+    if not run_limiter.allow(rate_key):
+        return JSONResponse(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            content={
+                &quot;detail&quot;: &quot;The review limit was reached. Wait one minute and try again.&quot;
+            },
+        )
+    try:
+        run = request.app.state.coordinator.run(
+            payload.scenario_id, payload.service_area
+        )
+        pipeline = request.app.state.pipeline_manifest.load()
+        run.briefing = request.app.state.briefing_provider.create(run, pipeline)
+        return run
+    except KeyError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=&quot;The selected scenario does not exist.&quot;,
+        ) from error</code></pre>
+    </figure>
+  
+<p>This is the point where the governed values and the synthetic building records meet. The public endpoint does not read raw ADLS files.</p>
+<h3>3. The backend selects live Foundry or Practice</h3>
+<p>The briefing provider is deterministic during local testing or CI. In the deployed environment, a configured <code>FOUNDRY_AGENT_ENDPOINT</code> selects the live hosted agent.</p>
+
+    <figure class="code-sample">
+      <figcaption>
+        <strong>The API chooses Practice or live Foundry</strong>
+        <code>backend/app/briefings.py</code>
+      </figcaption>
+      <pre tabindex="0" aria-label="The API chooses Practice or live Foundry"><code data-language="python">def create_briefing_provider() -&gt; BriefingProvider:
+    endpoint = foundry_agent_endpoint()
+    if not endpoint or os.getenv(&quot;FAKE_AI&quot;, &quot;0&quot;) == &quot;1&quot;:
+        return PracticeBriefingProvider()
+    return FoundryBriefingProvider(
+        endpoint=endpoint,
+        credential=DefaultAzureCredential(exclude_interactive_browser_credential=True),
+        client=httpx.Client(timeout=45),
+    )</code></pre>
+    </figure>
+  
+<p>Practice output is labeled. A missing Foundry endpoint does not pretend to be a live model call.</p>
+<h3>4. The API sends governed evidence, not raw source rows</h3>
+<p>The live provider sends the pipeline contract and review result to the hosted agent&#39;s Responses endpoint. The caller&#39;s authorization token comes from Azure managed or developer credentials.</p>
+
+    <figure class="code-sample">
+      <figcaption>
+        <strong>The backend calls the hosted Responses endpoint</strong>
+        <code>backend/app/briefings.py</code>
+      </figcaption>
+      <pre tabindex="0" aria-label="The backend calls the hosted Responses endpoint"><code data-language="python">@dataclass
+class FoundryBriefingProvider:
+    endpoint: str
+    credential: TokenCredential
+    client: httpx.Client
+
+    def create(self, run: ReviewRun, pipeline: DataPipeline) -&gt; Briefing:
+        request_text = {
+            &quot;pipeline&quot;: pipeline.model_dump(mode=&quot;json&quot;),
+            &quot;review&quot;: run.model_dump(mode=&quot;json&quot;, exclude={&quot;briefing&quot;}),
+        }
+        response = self.client.post(
+            _responses_url(self.endpoint),
+            headers={&quot;Authorization&quot;: f&quot;Bearer {self._token()}&quot;},
+            json={
+                &quot;input&quot;: (
+                    &quot;Prepare the cited HPD supervisor briefing from this governed &quot;
+                    f&quot;Strategy Mosaic request:\n{request_text}&quot;
+                ),
+                &quot;stream&quot;: False,
+            },
+        )
+        response.raise_for_status()
+        payload = response.json()
+        return Briefing(
+            mode=&quot;live&quot;,
+            provider=&quot;Microsoft Foundry hosted agent&quot;,
+            text=_response_text(payload),
+            citations=_unique_citations(run),
+        )
+
+    def _token(self) -&gt; str:
+        return self.credential.get_token(
+            os.getenv(&quot;FOUNDRY_TOKEN_SCOPE&quot;, &quot;https://ai.azure.com/.default&quot;)
+        ).token</code></pre>
+    </figure>
+  
+<p>The request includes:</p>
+<ul><li>Strategy KPI values and approved object names;</li><li>the rule version and source dates;</li><li>synthetic building review items;</li><li>owner teams and service areas; and</li><li>approved citations.</li></ul>
+<p>It does not include a resident name, apartment, address, or raw 311 resolution text.</p>
+<h3>5. The hosted agent explains the evidence</h3>
+<p>The agent service exposes the Responses protocol at <code>/responses</code>. It keeps the instructions in code and reads the model deployment from environment configuration.</p>
+
+    <figure class="code-sample">
+      <figcaption>
+        <strong>The hosted agent keeps Strategy as the authority</strong>
+        <code>src/hpd-review-agent/main.py</code>
+      </figcaption>
+      <pre tabindex="0" aria-label="The hosted agent keeps Strategy as the authority"><code data-language="python">SYSTEM_INSTRUCTIONS = f&quot;&quot;&quot;You are the HPD Heat and Hot Water review assistant.
+
+Your job is to turn a governed Strategy Mosaic snapshot into a short briefing for a
+New York City housing supervisor. Explain what is known, what is unknown, and what a
+staff member should verify next.
+
+Rules:
+- Treat Strategy Mosaic metrics as authoritative. Never recalculate or replace them.
+- Distinguish a public-record aggregate from a synthetic practice case.
+- Never claim that a complaint caused a violation.
+- Never claim that a closed record proves heat or hot water was restored.
+- Never choose a legal or enforcement action.
+- Use short sentences that a U.S. high school student can understand.
+- Put evidence first, unknowns second, and a suggested staff follow-up last.
+- Include the Strategy object name for every metric you mention.
+- When a Strategy Mosaic MCP result is supplied in the request, use its governed metrics before
+  using any snapshot values in the request. Call get_projects, get_mosaic_models
+  or get_models, get_semantics, and then query.
+- Use Open Complaints and Open Candidate Violations from the
+  &quot;Heat and Hot Water Review Model&quot; for the latest dashboard totals.
+- If the MCP tool is available, identify its live result separately from the
+  supplied snapshot and report the query as the source of current counts.
+- Group building actions by service_area and assign them to the supplied owner_team.
+- Give each building a short ordered plan. Do not produce only a general summary.
+- Use role-based owners, never a person&#39;s name.
+- Cite only the sources supplied in the request and this official HPD guidance page:
+  {GUIDANCE_URL}
+&quot;&quot;&quot;</code></pre>
+    </figure>
+  
+
+    <figure class="code-sample">
+      <figcaption>
+        <strong>The hosted agent calls the configured model and optional toolbox</strong>
+        <code>src/hpd-review-agent/main.py</code>
+      </figcaption>
+      <pre tabindex="0" aria-label="The hosted agent calls the configured model and optional toolbox"><code data-language="python">def _run_live_briefing(request_text: str) -&gt; str:
+    from azure.ai.projects import AIProjectClient
+    from azure.identity import DefaultAzureCredential
+
+    endpoint = os.environ.get(&quot;FOUNDRY_PROJECT_ENDPOINT&quot;) or os.environ.get(
+        &quot;AZURE_AI_PROJECT_ENDPOINT&quot;
+    )
+    deployment = os.environ.get(&quot;AZURE_AI_MODEL_DEPLOYMENT_NAME&quot;)
+    if not endpoint or not deployment:
+        raise RuntimeError(
+            &quot;The live briefing needs FOUNDRY_PROJECT_ENDPOINT and &quot;
+            &quot;AZURE_AI_MODEL_DEPLOYMENT_NAME.&quot;
+        )
+
+    credential = DefaultAzureCredential()
+    tools: list[dict[str, Any]] = []
+    toolbox_endpoint = os.getenv(&quot;TOOLBOX_ENDPOINT&quot;)
+    if toolbox_endpoint:
+        toolbox_token = credential.get_token(&quot;https://ai.azure.com/.default&quot;).token
+        tools.append(
+            {
+                &quot;type&quot;: &quot;mcp&quot;,
+                &quot;server_label&quot;: &quot;strategy_tools&quot;,
+                &quot;server_url&quot;: toolbox_endpoint,
+                &quot;require_approval&quot;: &quot;never&quot;,
+                &quot;headers&quot;: {&quot;Authorization&quot;: f&quot;Bearer {toolbox_token}&quot;},
+            }
+        )
+
+    with AIProjectClient(endpoint=endpoint, credential=credential) as project:
+        with project.get_openai_client(
+            api_version=os.environ[&quot;AZURE_OPENAI_API_VERSION&quot;]
+        ) as client:
+            request: dict[str, Any] = {
+                &quot;model&quot;: deployment,
+                &quot;instructions&quot;: SYSTEM_INSTRUCTIONS,
+                &quot;input&quot;: request_text,
+            }
+            if tools:
+                request[&quot;tools&quot;] = tools
+            response = client.responses.create(**request)
+    return response.output_text</code></pre>
+    </figure>
+  
+<p>The instructions prevent the model from recalculating Strategy metrics or choosing an enforcement action. The model deployment remains config-driven.</p>
+<h3>6. The API returns one response shape</h3>
+<p>The Foundry agent returns a Responses payload. The backend extracts the first assistant text block and combines it with citations from the review items.</p>
+
+    <figure class="code-sample">
+      <figcaption>
+        <strong>The API extracts the assistant text from Responses</strong>
+        <code>backend/app/briefings.py</code>
+      </figcaption>
+      <pre tabindex="0" aria-label="The API extracts the assistant text from Responses"><code data-language="python">def _response_text(payload: dict[str, object]) -&gt; str:
+    output = payload.get(&quot;output&quot;)
+    if not isinstance(output, list):
+        raise ValueError(&quot;The Foundry agent returned no output array.&quot;)
+    for item in output:
+        if not isinstance(item, dict) or item.get(&quot;type&quot;) != &quot;message&quot;:
+            continue
+        content = item.get(&quot;content&quot;)
+        if not isinstance(content, list):
+            continue
+        for block in content:
+            if isinstance(block, dict) and isinstance(block.get(&quot;text&quot;), str):
+                return block[&quot;text&quot;]
+    raise ValueError(&quot;The Foundry agent returned no assistant text.&quot;)</code></pre>
+    </figure>
+  
+<p>The public UI renders the provider name, output mode, briefing, and citations. This lets a visitor distinguish Practice from a live Microsoft Foundry response.</p>
+<h3>What changes when Strategy MCP is live</h3>
+<p>The planned branch is small:</p>
+<ol><li>A Strategy content owner publishes the Heat and Hot Water Review Model to the</li></ol>
+<p>MCP-enabled project.</p>
+<ol><li>Foundry&#39;s <code>strategy-tools</code> toolbox is attached to the hosted agent.</li><li>The agent calls <code>get_projects</code>, <code>get_models</code> or <code>get_mosaic_models</code>,</li></ol>
+<p><code>get_semantics</code>, and <code>query</code>.</p>
+<ol><li>The agent uses the live Mosaic result before any snapshot value.</li><li>The output names the live MCP query as the source of current counts.</li></ol>
+<p>The existing request and response shapes do not need to change. Update the code-tour screenshots and this page when the real MCP model is available.</p>
+<h3>7. The rest of the data path</h3>
+<p><code>backend/app/ingest_adls.py</code> reads the three public NYC sources, applies a privacy allowlist, preserves each source grain, and writes four stable Strategy CSV folders plus <code>current/manifest.json</code> and a dated archive.</p>
+<p><code>infra/resources.bicep</code> creates ADLS Gen2 with anonymous access disabled. It uses Managed Identity for Azure jobs. The Strategy connector is the documented Shared Key exception because tenant consent for delegated Storage access is not available.</p>
+<p><code>strategy/mosaic-contract.yaml</code> defines table grains, the shared <code>building_id</code>, the Borough-to-Building hierarchy, distinct-count measures, and the rule version.</p>
+<p><code>backend/app/pipeline.py</code> reads the manifest. The frontend renders all seven steps: sources, preparation, storage, Strategy meaning, dashboard, Foundry briefing, and staff review.</p>
+<h3>Tests</h3>
+<p><code>backend/tests/test_adls_ingest.py</code> checks the privacy allowlist, distinct complaint count, building grain, rule state, and seven-step manifest.</p>
+<p><code>backend/tests/test_review.py</code> checks the bounded review request, citation shape, rate limit, and briefing response.</p>
+<p><code>frontend/src/App.test.tsx</code> checks the seven-step path and the visible Practice or live briefing behavior.</p>
+      </section>
+    
+      
+    <section class="related-links">
+      <div>
+        <p class="eyebrow">Official references</p>
+        <h2>Read the service details</h2>
+      </div>
+      <ul>
+        <li><a href="/docs/foundry-integration.html">Strategy MCP setup source</a></li><li><a href="/docs/security-networking.html">Security boundaries</a></li>
+      </ul>
+    </section>
+  
+    </main>
+    <footer class="docs-footer">
+      <div>
+        <strong>For demo purposes only</strong>
+        <p>Not an official city service. It does not provide legal or emergency advice.</p>
+      </div>
+      <nav aria-label="Footer navigation"><a href="/#limits">Privacy and data limits</a><a href="/#limits">Terms</a><a href="/docs/architecture.html">How this was built</a><a href="/docs/">Docs home</a><a href="https://learn.microsoft.com/azure/ai-foundry/">Microsoft Foundry</a></nav>
+      <p class="colophon">Last updated 2026-11-24 · local-pending · Heat and Hot Water implementation · Last updated 0 days ago - content current as of that date.</p>
+    </footer>
+  </body>
+</html>

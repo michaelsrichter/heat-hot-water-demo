@@ -1,0 +1,210 @@
+{
+  "architecture": "NYC Open Data -> Azure ingestion -> ADLS Gen2 -> Strategy Mosaic -> dashboard and review app",
+  "mode": "adls-gen2-strategy",
+  "storage_account": "managed-by-deployment",
+  "container": "heat-hot-water",
+  "manifest_path": "current/manifest.json",
+  "source_window_start": "2026-11-01T00:00:00",
+  "source_window_end": "2026-11-24T00:00:00",
+  "strategy_model": "Heat and Hot Water Review Model",
+  "strategy_dashboard": "Heat and Hot Water Review Dashboard",
+  "strategy_refresh": "adls-scheduled",
+  "strategy_as_of": "2026-11-24",
+  "strategy_source": "strategy-mosaic-snapshot",
+  "strategy_mcp_status": "not_configured",
+  "totals": [
+    {
+      "label": "Source rows",
+      "value": 66517
+    },
+    {
+      "label": "Building rows",
+      "value": 10163
+    },
+    {
+      "label": "Distinct source files",
+      "value": 3
+    }
+  ],
+  "kpis": [
+    {
+      "id": "unresolved-complaints",
+      "label": "Unresolved heat or hot-water complaints",
+      "value": 3786,
+      "unit": "complaints",
+      "definition": "Distinct complaint IDs whose latest complaint_status is OPEN in the Strategy source snapshot.",
+      "why_it_matters": "Shows the main complaint queue for supervisors to review now.",
+      "strategy_object": "Open Complaints"
+    },
+    {
+      "id": "unresolved-candidate-violations",
+      "label": "Unresolved candidate violations",
+      "value": 4686,
+      "unit": "violations",
+      "definition": "Distinct candidate violation IDs whose violationstatus is Open. The heat classification still needs review.",
+      "why_it_matters": "Shows possible enforcement records that may need staff verification.",
+      "strategy_object": "Open Candidate Violations"
+    },
+    {
+      "id": "buildings-with-complaints",
+      "label": "Buildings with heat or hot-water reports",
+      "value": 10163,
+      "unit": "buildings",
+      "definition": "Distinct HPD building IDs with at least one approved heat or hot-water complaint category in the source window.",
+      "why_it_matters": "Shows the number of buildings an HPD supervisor may need to review.",
+      "strategy_object": "Building (merged across sources)"
+    },
+    {
+      "id": "distinct-complaints",
+      "label": "Distinct heat or hot-water complaints",
+      "value": 31189,
+      "unit": "complaints",
+      "definition": "Distinct complaint_id values. Problem rows are not counted as separate complaints.",
+      "why_it_matters": "Prevents one complaint with several problem rows from being counted more than once.",
+      "strategy_object": "Distinct Complaints"
+    },
+    {
+      "id": "candidate-violations",
+      "label": "Candidate violation records",
+      "value": 4458,
+      "unit": "candidate violations",
+      "definition": "Distinct violation IDs found by the provisional heat or hot-water text screen and linked at building level.",
+      "why_it_matters": "Flags building histories for review without claiming that a particular complaint caused a violation.",
+      "strategy_object": "Candidate Violation Count"
+    },
+    {
+      "id": "buildings-with-candidate-violations",
+      "label": "Buildings with a candidate violation",
+      "value": 1693,
+      "unit": "buildings",
+      "definition": "Buildings in the complaint summary with at least one candidate violation record.",
+      "why_it_matters": "Narrows the review set while preserving buildings with no matching violation.",
+      "strategy_object": "Building \u2192 Candidate Violation Count"
+    },
+    {
+      "id": "supporting-311-requests",
+      "label": "Supporting 311 requests",
+      "value": 30297,
+      "unit": "requests",
+      "definition": "HPD heat or hot-water 311 requests in the source window. These remain supporting context until the linkage is validated.",
+      "why_it_matters": "Shows when requests were made without treating a closed request as proof that heat or hot water was restored.",
+      "strategy_object": "Request Unique Key"
+    },
+    {
+      "id": "raw-problem-rows",
+      "label": "Problem rows checked",
+      "value": 31484,
+      "unit": "problem rows",
+      "definition": "Raw HPD problem rows read during ingestion. This is not the complaint count.",
+      "why_it_matters": "Makes the difference between source rows and distinct complaints visible.",
+      "strategy_object": "Problem"
+    }
+  ],
+  "borough_metrics": [
+    {
+      "borough": "Bronx",
+      "distinct_complaints": 10291,
+      "candidate_violations": 1875,
+      "unresolved_complaints": 836,
+      "unresolved_candidate_violations": 1852
+    },
+    {
+      "borough": "Brooklyn",
+      "distinct_complaints": 8860,
+      "candidate_violations": 1086,
+      "unresolved_complaints": 1474,
+      "unresolved_candidate_violations": 1076
+    },
+    {
+      "borough": "Manhattan",
+      "distinct_complaints": 7650,
+      "candidate_violations": 1080,
+      "unresolved_complaints": 870,
+      "unresolved_candidate_violations": 1072
+    },
+    {
+      "borough": "Queens",
+      "distinct_complaints": 4139,
+      "candidate_violations": 375,
+      "unresolved_complaints": 576,
+      "unresolved_candidate_violations": 372
+    },
+    {
+      "borough": "Staten Island",
+      "distinct_complaints": 249,
+      "candidate_violations": 42,
+      "unresolved_complaints": 30,
+      "unresolved_candidate_violations": 42
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "id": "public-data",
+      "title": "Read NYC HPD records",
+      "owner": "NYC Open Data",
+      "detail": "Read heat and hot-water complaints, candidate violations, and 311 requests.",
+      "status": "ready",
+      "artifact": "2026-11-24T20:24:35.931750+00:00"
+    },
+    {
+      "order": 2,
+      "id": "prepare",
+      "title": "Count the right thing",
+      "owner": "Azure ingestion job",
+      "detail": "Count distinct complaints, keep source grains separate, and remove personal fields.",
+      "status": "ready",
+      "artifact": "current/*.csv"
+    },
+    {
+      "order": 3,
+      "id": "store",
+      "title": "Save a dated copy",
+      "owner": "Azure",
+      "detail": "Keep stable Strategy files and a dated archive in ADLS Gen2.",
+      "status": "ready",
+      "artifact": "adls://heat-hot-water/current/"
+    },
+    {
+      "order": 4,
+      "id": "connect",
+      "title": "Define the facts in Strategy",
+      "owner": "Strategy Mosaic",
+      "detail": "Use one shared definition for each KPI, building relationship, date, and rule version.",
+      "status": "configured",
+      "artifact": "Heat and Hot Water Review Model"
+    },
+    {
+      "order": 5,
+      "id": "model",
+      "title": "Show the same numbers",
+      "owner": "Strategy dashboard",
+      "detail": "Use the Mosaic measures in the dashboard and review workflow.",
+      "status": "configured",
+      "artifact": "Heat and Hot Water Review Dashboard"
+    },
+    {
+      "order": 6,
+      "id": "briefing",
+      "title": "Prepare a cited briefing",
+      "owner": "Foundry IQ",
+      "detail": "Read the governed facts and approved HPD guidance, then draft a review-ready summary.",
+      "status": "configured",
+      "artifact": "HPD Review Agent"
+    },
+    {
+      "order": 7,
+      "id": "present",
+      "title": "Let an HPD official review",
+      "owner": "Housing staff",
+      "detail": "Check the facts, missing details, guidance, and suggested next step before acting.",
+      "status": "configured",
+      "artifact": "Case review list"
+    }
+  ],
+  "limitations": [
+    "The deployment uses managed identity and never publishes storage credentials.",
+    "Candidate heat classifications remain needs_review.",
+    "Apartment, address, person, location, and source free-text fields are excluded."
+  ]
+}

@@ -1,0 +1,69 @@
+model: Heat and Hot Water Review Model
+version: adls-strategy-0.1
+mode: pre_release_candidate
+source:
+  platform: Azure Data Lake Storage Gen2
+  strategy_connector: Configured outside public source
+  container: heat-hot-water
+  paths:
+    complaints: strategy-complaints/complaint-problems.csv
+    violations: strategy-violations/violation-candidates.csv
+    requests311: strategy-requests-311/requests-311.csv
+    building_summary: strategy-buildings/building-review.csv
+    manifest: current/manifest.json
+  refresh_schedule: Daily
+  refresh_policy: Replace existing data
+tables:
+  complaint-problems:
+    grain: problem_id
+    shared_attribute: building_id
+    distinct_complaint_measure: complaint_id
+  violation-candidates:
+    grain: violationid
+    shared_attribute: buildingid
+  requests-311:
+    grain: unique_key
+    status: supporting_only
+  building-review:
+    grain: building_id
+    shared_attribute: building_id
+hierarchies:
+  - parent: Borough
+    child: Building
+relationships:
+  - from: building-review.building_id
+    to: complaint-problems.building_id
+    cardinality: one_to_many
+  - from: building-review.building_id
+    to: violation-candidates.buildingid
+    cardinality: one_to_many
+measures:
+  unresolved_complaints:
+    formula: sum of building-review.open_complaint_count
+    grain: building_id
+  unresolved_candidate_violations:
+    formula: sum of building-review.open_candidate_violation_count
+    grain: building_id
+  distinct_complaints:
+    formula: distinct count of complaint_id
+    grain: building_id
+  candidate_violation_count:
+    formula: distinct count of violationid
+    grain: building_id
+  review_state:
+    default: needs_verification
+quality:
+  privacy_allowlist: true
+  missing_recorded_date_route: needs_verification
+  text_match_approval: false
+  311_join_approval: false
+  strategy_refresh: daily
+  source_evidence: current/manifest.json
+  mcp_target: Strategy Mosaic MCP Server
+  mcp_access: read-only, certified model, use-governed-metrics
+rule:
+  description: >-
+    No policy eligibility threshold is approved. Candidate records remain
+    needs_review and needs_verification until a qualified owner approves
+    classification and review rules.
+  not_a_policy: true

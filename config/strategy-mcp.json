@@ -1,0 +1,34 @@
+{
+  "name": "Strategy Mosaic MCP",
+  "transport": "streamable-http",
+  "url": "https://studio.strategy.com/collaboration/mcp/mosaic",
+  "authMode": "oauth-identity-passthrough",
+  "authorizationUrl": "https://studio.strategy.com/collaboration/authorize",
+  "tokenUrl": "https://studio.strategy.com/collaboration/token",
+  "registrationUrl": "https://studio.strategy.com/collaboration/register",
+  "scopes": [
+    "offline_access",
+    "openid",
+    "mcp:stream"
+  ],
+  "foundryConnection": "strategy-mosaic-mcp",
+  "foundryToolbox": "strategy-tools",
+  "foundryRedirectUrl": "https://global.consent.azure-apim.net/redirect/7562f5510708426eacbf4e931db046ad",
+  "usePrivilege": "Use Mosaic MCP Server",
+  "model": "Heat and Hot Water Review Model",
+  "readOnly": true,
+  "requiredTools": [
+    "get_projects",
+    "get_mosaic_models",
+    "get_semantics",
+    "query"
+  ],
+  "requiredMetrics": [
+    "Open Complaints",
+    "Open Candidate Violations",
+    "Distinct Complaints",
+    "Candidate Violation Count"
+  ],
+  "currentMode": "governed-adls-snapshot",
+  "note": "The client secret is stored only in the Foundry connection. Complete OAuth consent after the Strategy callback URL is allowed."
+}

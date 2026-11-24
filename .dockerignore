@@ -1,0 +1,13 @@
+.git
+.github
+.vscode
+.devcontainer
+.azure
+.env
+.env.*
+**/node_modules
+**/dist
+**/.pytest_cache
+**/.venv
+**/coverage
+**/__pycache__

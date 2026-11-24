@@ -1,0 +1,339 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# Demo overview\nThis dashboard shows how the demo is running: requests, AI model calls, agents and tools, security checks, Azure services, health, and recent failures.\n\nIt is defined in `infra/dashboards/demo-overview.workbook.json`. Change that file, not only the portal, or your changes are lost on the next deploy. See the `eps-demo-observability` skill."
+      },
+      "name": "intro"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "time-range",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Time range",
+            "type": 4,
+            "isRequired": true,
+            "value": {
+              "durationMs": 86400000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 2592000000
+                }
+              ],
+              "allowCustom": true
+            }
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.insights/components"
+      },
+      "name": "parameters"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 1. Overview\nAll requests the demo received. Good looks like: few or no server errors (5xx), and steady response times."
+      },
+      "name": "h-overview"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "requests\n| summarize Requests = count(), [\"Server errors (5xx)\"] = countif(toint(resultCode) >= 500) by bin(timestamp, {TimeRange:grain})",
+        "size": 0,
+        "title": "Requests and server errors (5xx) over time",
+        "noDataMessage": "No data yet. This section fills in when the demo sends this kind of telemetry.",
+        "timeContextFromParameter": "TimeRange",
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "visualization": "timechart",
+        "resourceType": "microsoft.insights/components",
+        "crossComponentResources": [
+          "__APP_INSIGHTS_ID__"
+        ]
+      },
+      "name": "requests-over-time"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "requests\n| summarize Requests = count(), [\"Median time (ms)\"] = round(percentile(duration, 50), 0), [\"Slowest 5% start at (ms)\"] = round(percentile(duration, 95), 0), [\"Server errors (5xx)\"] = countif(toint(resultCode) >= 500) by Service = cloud_RoleName, Release = application_Version\n| order by Requests desc",
+        "size": 0,
+        "title": "Response time by service and release (ms)",
+        "noDataMessage": "No data yet. This section fills in when the demo sends this kind of telemetry.",
+        "timeContextFromParameter": "TimeRange",
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "visualization": "table",
+        "resourceType": "microsoft.insights/components",
+        "crossComponentResources": [
+          "__APP_INSIGHTS_ID__"
+        ]
+      },
+      "name": "latency-by-service"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 2. AI models\nEvery call to an AI model. Tokens are the pieces of text a model reads (input) and writes (output). Cost is an **estimate** from the prices in `config/models.json`, not a bill."
+      },
+      "name": "h-ai"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "union requests, dependencies\n| extend Op = tostring(customDimensions[\"gen_ai.operation.name\"])\n| where isnotempty(customDimensions[\"gen_ai.request.model\"])\n| extend Model = tostring(customDimensions[\"gen_ai.request.model\"]), InputTokens = toint(customDimensions[\"gen_ai.usage.input_tokens\"]), OutputTokens = toint(customDimensions[\"gen_ai.usage.output_tokens\"]), Cost = todouble(customDimensions[\"demo.cost.estimated_usd\"])\n| summarize Calls = count(), [\"Input tokens\"] = sum(InputTokens), [\"Output tokens\"] = sum(OutputTokens), [\"Estimated cost (USD)\"] = round(sum(Cost), 4), [\"Slowest 5% start at (ms)\"] = round(percentile(duration, 95), 0), [\"Throttled (429)\"] = countif(resultCode == \"429\"), Failed = countif(success == false) by Model\n| order by Calls desc",
+        "size": 0,
+        "title": "Model calls, tokens, and estimated cost by model",
+        "noDataMessage": "No data yet. This section fills in when the demo sends this kind of telemetry.",
+        "timeContextFromParameter": "TimeRange",
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "visualization": "table",
+        "resourceType": "microsoft.insights/components",
+        "crossComponentResources": [
+          "__APP_INSIGHTS_ID__"
+        ]
+      },
+      "name": "model-summary"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "union requests, dependencies\n| extend Op = tostring(customDimensions[\"gen_ai.operation.name\"])\n| where isnotempty(customDimensions[\"gen_ai.request.model\"])\n| summarize Calls = count() by bin(timestamp, {TimeRange:grain}), Model = tostring(customDimensions[\"gen_ai.request.model\"])",
+        "size": 0,
+        "title": "Model calls over time, by model",
+        "noDataMessage": "No data yet. This section fills in when the demo sends this kind of telemetry.",
+        "timeContextFromParameter": "TimeRange",
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "visualization": "timechart",
+        "resourceType": "microsoft.insights/components",
+        "crossComponentResources": [
+          "__APP_INSIGHTS_ID__"
+        ]
+      },
+      "name": "model-calls-over-time"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 3. Agents and tools\nHow often each agent ran and which tools it used. Good looks like: a high tool success rate and no single tool that is much slower than the rest."
+      },
+      "name": "h-agents"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "union requests, dependencies\n| extend Op = tostring(customDimensions[\"gen_ai.operation.name\"])\n| where Op == \"invoke_agent\"\n| extend Agent = coalesce(tostring(customDimensions[\"gen_ai.agent.name\"]), tostring(customDimensions[\"demo.agent\"]))\n| summarize Runs = count(), Failed = countif(success == false), [\"Slowest 5% start at (ms)\"] = round(percentile(duration, 95), 0) by Agent\n| order by Runs desc",
+        "size": 0,
+        "title": "Runs per agent",
+        "noDataMessage": "No data yet. This section fills in when the demo sends this kind of telemetry.",
+        "timeContextFromParameter": "TimeRange",
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "visualization": "table",
+        "resourceType": "microsoft.insights/components",
+        "crossComponentResources": [
+          "__APP_INSIGHTS_ID__"
+        ]
+      },
+      "name": "agent-runs"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "union requests, dependencies\n| extend Op = tostring(customDimensions[\"gen_ai.operation.name\"])\n| where Op == \"execute_tool\"\n| extend Tool = tostring(customDimensions[\"gen_ai.tool.name\"])\n| summarize Calls = count(), [\"Success rate (%)\"] = round(100.0 * countif(success == true) / count(), 1), [\"Slowest 5% start at (ms)\"] = round(percentile(duration, 95), 0) by Tool\n| order by Calls desc",
+        "size": 0,
+        "title": "Calls per tool",
+        "noDataMessage": "No data yet. This section fills in when the demo sends this kind of telemetry.",
+        "timeContextFromParameter": "TimeRange",
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "visualization": "table",
+        "resourceType": "microsoft.insights/components",
+        "crossComponentResources": [
+          "__APP_INSIGHTS_ID__"
+        ]
+      },
+      "name": "tool-calls"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 4. Security boundaries\nA boundary is a rule about who may see which data. An **expected denial** means a test or visitor asked for data they should not get, and the demo correctly said no. An **unexpected denial** needs a look. If expected denials stop appearing, that is a problem too."
+      },
+      "name": "h-security"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "union requests, dependencies\n| extend Outcome = tostring(customDimensions[\"demo.authz.outcome\"]), Boundary = tostring(customDimensions[\"demo.boundary\"])\n| where isnotempty(Outcome)\n| summarize Checks = count() by Boundary, Outcome\n| order by Boundary asc, Outcome asc",
+        "size": 0,
+        "title": "Access checks by boundary and outcome",
+        "noDataMessage": "No data yet. This section fills in when the demo sends this kind of telemetry.",
+        "timeContextFromParameter": "TimeRange",
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "visualization": "table",
+        "resourceType": "microsoft.insights/components",
+        "crossComponentResources": [
+          "__APP_INSIGHTS_ID__"
+        ]
+      },
+      "name": "authz-outcomes"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "requests\n| where resultCode in (\"401\", \"403\", \"429\")\n| summarize Responses = count() by bin(timestamp, {TimeRange:grain}), [\"Response code\"] = resultCode",
+        "size": 0,
+        "title": "Sign-in failures (401), refusals (403), and rate limits (429) over time",
+        "noDataMessage": "No data yet. This section fills in when the demo sends this kind of telemetry.",
+        "timeContextFromParameter": "TimeRange",
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "visualization": "timechart",
+        "resourceType": "microsoft.insights/components",
+        "crossComponentResources": [
+          "__APP_INSIGHTS_ID__"
+        ]
+      },
+      "name": "denied-and-limited"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 5. Azure services\nAzure services send their own logs here through diagnostic settings. This table shows how much data each log table received. Add one query per service the demo uses (for example, AI Search or Storage errors) below it."
+      },
+      "name": "h-azure"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "Usage\n| where IsBillable == true\n| summarize [\"Data received (MB)\"] = round(sum(Quantity), 2) by [\"Log table\"] = DataType\n| order by [\"Data received (MB)\"] desc",
+        "size": 0,
+        "title": "Data received by each log table (MB)",
+        "noDataMessage": "No data yet. This section fills in when the demo sends this kind of telemetry.",
+        "timeContextFromParameter": "TimeRange",
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "visualization": "table",
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "crossComponentResources": [
+          "__LOG_ANALYTICS_ID__"
+        ]
+      },
+      "name": "ingestion-by-table"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 6. Health\nResults of calls to the `/health` endpoint. Good looks like: no failed checks."
+      },
+      "name": "h-health"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "requests\n| where url has \"/health\" or name has \"health\"\n| summarize Passed = countif(success == true), Failed = countif(success == false) by bin(timestamp, {TimeRange:grain})",
+        "size": 0,
+        "title": "Health checks over time",
+        "noDataMessage": "No data yet. This section fills in when the demo sends this kind of telemetry.",
+        "timeContextFromParameter": "TimeRange",
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "visualization": "timechart",
+        "resourceType": "microsoft.insights/components",
+        "crossComponentResources": [
+          "__APP_INSIGHTS_ID__"
+        ]
+      },
+      "name": "health-over-time"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 7. Recent failures\nThe latest failed steps. Copy a **Trace ID**, then open Application Insights, select Transaction search, and paste it to see the whole request from start to finish."
+      },
+      "name": "h-failures"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "union requests, dependencies\n| where success == false\n| project Time = timestamp, Service = cloud_RoleName, Step = name, Result = resultCode, [\"Trace ID\"] = operation_Id\n| top 50 by Time desc",
+        "size": 0,
+        "title": "Latest 50 failed steps",
+        "noDataMessage": "No data yet. This section fills in when the demo sends this kind of telemetry.",
+        "timeContextFromParameter": "TimeRange",
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "visualization": "table",
+        "resourceType": "microsoft.insights/components",
+        "crossComponentResources": [
+          "__APP_INSIGHTS_ID__"
+        ]
+      },
+      "name": "recent-failures"
+    }
+  ],
+  "fallbackResourceIds": [
+    "__APP_INSIGHTS_ID__"
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}

@@ -1,0 +1,3 @@
+description: Strategy Mosaic MCP tools for governed HPD KPI queries.
+connections:
+  - name: strategy-mosaic-mcp

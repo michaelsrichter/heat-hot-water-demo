@@ -1,0 +1,37 @@
+[project]
+name = "hpd-review-agent"
+version = "0.1.0"
+description = "Foundry hosted agent for cited HPD heat and hot-water review briefings."
+requires-python = ">=3.13"
+dependencies = [
+  "azure-ai-projects>=1.0,<2",
+  "azure-identity>=1.20,<2",
+  "fastapi>=0.115,<1",
+  "openai>=2,<3",
+  "python-dotenv>=1,<2",
+  "uvicorn[standard]>=0.32,<1",
+]
+
+[tool.poetry]
+name = "hpd-review-agent"
+version = "0.1.0"
+description = "Foundry hosted agent for cited HPD heat and hot-water review briefings."
+authors = ["Microsoft Partner Team"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.13"
+azure-ai-projects = ">=1.0,<2"
+azure-identity = ">=1.20,<2"
+fastapi = ">=0.115,<1"
+openai = ">=2,<3"
+python-dotenv = ">=1,<2"
+uvicorn = { extras = ["standard"], version = ">=0.32,<1" }
+
+[build-system]
+requires = ["poetry-core>=2.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"

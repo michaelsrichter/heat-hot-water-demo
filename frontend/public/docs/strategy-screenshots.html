@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="These accessible HTML views rebuild the verified Strategy setup without exposing connection secrets or requiring the private portal." />
+    <meta name="theme-color" content="#edf6fb" />
+    <title>Strategy interface views | HPD Heat &amp; Hot Water</title>
+    <link rel="stylesheet" href="/docs/assets.css" />
+    <script src="/docs/theme.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="docs-header">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">H</span>
+        <span>HPD Heat &amp; Hot Water</span>
+      </a>
+      <nav aria-label="Documentation navigation"><a href="/">Demo</a><a href="/docs/">Docs home</a><a href="/docs/architecture.html">Azure architecture</a><a href="/docs/foundry-integration.html">Foundry integration</a><a href="/docs/strategy-screenshots.html" aria-current="page">Strategy views</a><a href="/docs/security-networking.html">Security + networking</a><a href="/docs/azure-ai-costs.html">Azure + AI costs</a><a href="/docs/code-tour.html">Code tour</a></nav>
+      <button class="theme-button" type="button" data-theme-toggle aria-label="Use dark mode">
+        <span data-theme-label>Dark</span>
+      </button>
+    </header>
+    <div class="demo-banner">NYC housing response demo - not an official city service</div>
+    <main id="main-content" class="docs-main">
+      <section class="docs-hero">
+        <div class="docs-hero__copy">
+          <p class="eyebrow">Model, dashboard, and refresh</p>
+          <h1>Strategy interface views</h1>
+          <p class="lead">These accessible HTML views rebuild the verified Strategy setup without exposing connection secrets or requiring the private portal.</p>
+          <div class="hero-actions">
+            <a class="primary-link" href="/">Open live demo</a>
+            <a class="secondary-link" href="/docs/">All documentation</a>
+          </div>
+        </div>
+        
+    <aside class="docs-hero__aside">
+      <span>Current status</span>
+      <strong>Do not capture storage keys, usernames, passwords, OAuth client secrets, or callback tokens in published screenshots.</strong>
+    </aside>
+  
+      </section>
+      
+    <section class="fact-grid" aria-label="Key facts">
+      
+            <article class="fact-card">
+              <span>Mosaic model</span>
+              <strong>4 source tables</strong>
+              <p>Buildings, complaints, violations, and 311 requests.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>Shared key</span>
+              <strong>building_id</strong>
+              <p>Connects Borough and Building facts without merging grains.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>Refresh</span>
+              <strong>Daily</strong>
+              <p>Replace existing data in all four Strategy folders.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>View type</span>
+              <strong>HTML rebuild</strong>
+              <p>Not a live or raw Strategy screenshot.</p>
+            </article>
+          
+    </section>
+  
+      
+      
+    <section class="rebuild-grid" aria-label="Rebuilt Strategy views">
+      <figure class="ui-shot ui-shot--model">
+        <figcaption>
+          <span>HTML rebuild - not a live screenshot</span>
+          <strong>Heat and Hot Water Review Model</strong>
+        </figcaption>
+        <div class="fake-window">
+          <div class="fake-toolbar"><i></i><i></i><i></i><span>Strategy Mosaic</span></div>
+          <div class="model-grid">
+            <article><b>Borough</b><small>Attribute</small></article>
+            <article><b>Building</b><small>Shared building_id</small></article>
+            <article><b>Complaint problems</b><small>One problem row</small></article>
+            <article><b>Candidate violations</b><small>Needs review</small></article>
+            <article><b>311 requests</b><small>Supporting context</small></article>
+          </div>
+        </div>
+      </figure>
+      <figure class="ui-shot ui-shot--dashboard">
+        <figcaption>
+          <span>Rebuilt from pipeline-status.json</span>
+          <strong>Heat and Hot Water dashboard</strong>
+        </figcaption>
+        <div class="fake-window">
+          <div class="fake-toolbar"><i></i><i></i><i></i><span>Strategy Dashboard</span></div>
+          <div class="mini-kpis">
+            <div><span>Distinct complaints</span><strong>31,189</strong></div>
+            <div><span>Candidate violations</span><strong>4,458</strong></div>
+          </div>
+          <div class="mini-bars">
+            
+                  <div>
+                    <span>Bronx</span>
+                    <b style="--bar:100%"></b>
+                    <strong>10,291</strong>
+                  </div>
+                
+                  <div>
+                    <span>Brooklyn</span>
+                    <b style="--bar:86%"></b>
+                    <strong>8,860</strong>
+                  </div>
+                
+                  <div>
+                    <span>Manhattan</span>
+                    <b style="--bar:74%"></b>
+                    <strong>7,650</strong>
+                  </div>
+                
+                  <div>
+                    <span>Queens</span>
+                    <b style="--bar:40%"></b>
+                    <strong>4,139</strong>
+                  </div>
+                
+                  <div>
+                    <span>Staten Island</span>
+                    <b style="--bar:2%"></b>
+                    <strong>249</strong>
+                  </div>
+                
+          </div>
+        </div>
+      </figure>
+      <figure class="ui-shot ui-shot--refresh">
+        <figcaption>
+          <span>Verified setup</span>
+          <strong>Daily refresh subscription</strong>
+        </figcaption>
+        <div class="fake-window">
+          <div class="fake-toolbar"><i></i><i></i><i></i><span>Subscription details</span></div>
+          <dl class="refresh-list">
+            <div><dt>Schedule</dt><dd>Daily</dd></div>
+            <div><dt>Policy</dt><dd>Replace existing data</dd></div>
+            <div><dt>Tables</dt><dd>4</dd></div>
+            <div><dt>Folders</dt><dd>strategy-buildings, complaints, violations, requests-311</dd></div>
+          </dl>
+        </div>
+      </figure>
+    </section>
+  
+      
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>operations/strategy-screenshots.md</code></div>
+        <h2>Strategy interface views</h2>
+<p>This page uses rebuilt HTML views instead of raw portal screenshots. The views show the current model, dashboard totals, and refresh settings without exposing connector secrets.</p>
+<h3>Why use rebuilt views</h3>
+<p>A raw screenshot becomes hard to read on a phone and can include private connection details. These views keep only the facts that help explain the demo. They are not live Strategy screens.</p>
+<h3>Mosaic model</h3>
+<p>The Heat and Hot Water Review Model has four ADLS source tables. They share <code>building_id</code> and follow the Borough-to-Building relationship.</p>
+<ul><li>Buildings are the shared location record.</li><li>Complaint problems remain one row per problem.</li><li>Candidate violations remain provisional.</li><li>311 requests remain supporting context.</li></ul>
+<h3>Reconciled dashboard</h3>
+<p>The dashboard counts distinct complaints and candidate violations by borough. The HTML chart on this page is rebuilt from the current governed pipeline manifest.</p>
+<p>The candidate violation screen is not proof that a complaint caused a violation. It is a queue for staff review.</p>
+<h3>Scheduled refresh</h3>
+<p>Strategy runs <strong>Heat and Hot Water Daily Refresh</strong> on a Daily schedule. It replaces data from all four one-file ADLS folders.</p>
+<p>The stable path for each table does not change between runs:</p>
+<ul><li><code>strategy-buildings/</code></li><li><code>strategy-complaints/</code></li><li><code>strategy-violations/</code></li><li><code>strategy-requests-311/</code></li></ul>
+<h3>Screenshot rule</h3>
+<p>Do not capture a storage key, Strategy password, OAuth secret, or callback token. If a raw screen is needed later, crop or hide every connection and identity detail before publishing it.</p>
+      </section>
+    
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>operations/manual-strategy-setup.md</code></div>
+        <h2>Strategy ADLS setup</h2>
+<h3>Connection boundary</h3>
+<p>The public repository does not create or store a Strategy credential. Get the deployment&#39;s storage account name from <code>azd env get-value DATA_STORAGE_ACCOUNT_NAME</code>. Configure the approved connector identity and any credential outside source control.</p>
+<p>Do not publish connector screenshots that show usernames, passwords, tokens, subscription IDs, or storage secrets.</p>
+<h3>ADLS source folders</h3>
+<p>Strategy reads one table folder at a time:</p>
+
+    <div class="doc-table-wrap">
+      <table>
+        <thead><tr><th scope="col">Strategy folder</th><th scope="col">Table</th><th scope="col">Grain</th></tr></thead>
+        <tbody>
+          <tr><td><code>strategy-buildings</code></td><td><code>building-review.csv</code></td><td>one building</td></tr><tr><td><code>strategy-complaints</code></td><td><code>complaint-problems.csv</code></td><td>one problem row</td></tr><tr><td><code>strategy-violations</code></td><td><code>violation-candidates.csv</code></td><td>one candidate violation</td></tr><tr><td><code>strategy-requests-311</code></td><td><code>requests-311.csv</code></td><td>one 311 request</td></tr>
+        </tbody>
+      </table>
+    </div>
+  
+<p>The old local-file building snapshot was removed from the Mosaic model.</p>
+<h3>Completed model work</h3>
+<p>Strategy applies the merged attributes:</p>
+
+    <div class="doc-table-wrap">
+      <table>
+        <thead><tr><th scope="col">Attribute</th><th scope="col">Key</th><th scope="col">Parent</th></tr></thead>
+        <tbody>
+          <tr><td>Borough</td><td><code>borough</code></td><td>none</td></tr><tr><td>Building</td><td><code>building_id</code> / <code>buildingid</code></td><td>Borough</td></tr><tr><td>Complaint</td><td><code>complaint_id</code></td><td>Building</td></tr><tr><td>Violation Candidate</td><td><code>violationid</code></td><td>Building</td></tr><tr><td>311 Request</td><td><code>unique_key</code></td><td>Building</td></tr>
+        </tbody>
+      </table>
+    </div>
+  
+<p>Measures:</p>
+<ul><li><strong>Distinct Complaints</strong> = distinct <code>complaint_id</code>;</li><li><strong>Candidate Violation Count</strong> = distinct candidate <code>violationid</code>; and</li><li><strong>Review State</strong> = building-level <code>needs_verification</code>.</li></ul>
+<p>The model has four ADLS source tables and uses <code>Replace existing data</code> for each.</p>
+<h3>Completed refresh schedule</h3>
+<ul><li>Schedule: <code>Daily</code>;</li><li>name: <code>Heat and Hot Water Daily Refresh</code>;</li><li>model policy: <code>Replace existing data</code>;</li><li>tables: all four Strategy folders.</li></ul>
+<h3>Reconciled dashboard</h3>
+
+    <div class="doc-table-wrap">
+      <table>
+        <thead><tr><th scope="col">Borough</th><th scope="col">Distinct complaints</th><th scope="col">Candidate violations</th></tr></thead>
+        <tbody>
+          <tr><td>Bronx</td><td>8,424</td><td>1,525</td></tr><tr><td>Brooklyn</td><td>7,238</td><td>782</td></tr><tr><td>Manhattan</td><td>6,171</td><td>808</td></tr><tr><td>Queens</td><td>3,383</td><td>306</td></tr><tr><td>Staten Island</td><td>200</td><td>35</td></tr>
+        </tbody>
+      </table>
+    </div>
+  
+<p>The dashboard is saved from the ADLS-backed model. Candidate violation totals reflect the latest refreshed source snapshot and remain provisional.</p>
+<h3>Credential maintenance</h3>
+<p>The public deployment disables storage shared-key authentication. Follow the organization&#39;s approved identity process when the external Strategy connection needs rotation. Test the connection, run one manual model refresh, and keep all credential values outside the repository.</p>
+      </section>
+    
+      
+    </main>
+    <footer class="docs-footer">
+      <div>
+        <strong>For demo purposes only</strong>
+        <p>Not an official city service. It does not provide legal or emergency advice.</p>
+      </div>
+      <nav aria-label="Footer navigation"><a href="/#limits">Privacy and data limits</a><a href="/#limits">Terms</a><a href="/docs/architecture.html">How this was built</a><a href="/docs/">Docs home</a><a href="https://learn.microsoft.com/azure/ai-foundry/">Microsoft Foundry</a></nav>
+      <p class="colophon">Last updated 2026-11-24 · local-pending · Heat and Hot Water implementation · Last updated 0 days ago - content current as of that date.</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,82 @@
+{
+  "brand": "HPD Heat & Hot Water",
+  "demoPill": "NYC housing response demo - not an official city service",
+  "demoNavigation": [
+    {
+      "label": "Today's open work",
+      "href": "#overview"
+    },
+    {
+      "label": "Ask Foundry",
+      "href": "#review"
+    },
+    {
+      "label": "Data limits",
+      "href": "#limits"
+    },
+    {
+      "label": "Documentation",
+      "href": "/docs/"
+    }
+  ],
+  "docsNavigation": [
+    {
+      "label": "Demo",
+      "href": "/"
+    },
+    {
+      "label": "Docs home",
+      "href": "/docs/"
+    },
+    {
+      "label": "Azure architecture",
+      "href": "/docs/architecture.html"
+    },
+    {
+      "label": "Foundry integration",
+      "href": "/docs/foundry-integration.html"
+    },
+    {
+      "label": "Strategy views",
+      "href": "/docs/strategy-screenshots.html"
+    },
+    {
+      "label": "Security + networking",
+      "href": "/docs/security-networking.html"
+    },
+    {
+      "label": "Azure + AI costs",
+      "href": "/docs/azure-ai-costs.html"
+    },
+    {
+      "label": "Code tour",
+      "href": "/docs/code-tour.html"
+    }
+  ],
+  "footer": {
+    "title": "For demo purposes only",
+    "description": "Not an official city service. It does not provide legal or emergency advice.",
+    "links": [
+      {
+        "label": "Privacy and data limits",
+        "href": "/#limits"
+      },
+      {
+        "label": "Terms",
+        "href": "/#limits"
+      },
+      {
+        "label": "How this was built",
+        "href": "/docs/architecture.html"
+      },
+      {
+        "label": "Docs home",
+        "href": "/docs/"
+      },
+      {
+        "label": "Microsoft Foundry",
+        "href": "https://learn.microsoft.com/azure/ai-foundry/"
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "$comment": "The hosted briefing agent keeps the model choice in configuration. Strategy Mosaic remains the source of governed metric definitions.",
+  "roles": {
+    "hpd-review-briefing": {
+      "displayName": "HPD review briefing",
+      "model": "gpt-5.4-mini",
+      "version": "2026-03-17",
+      "deployment": "gpt-5-4-mini",
+      "format": "OpenAI",
+      "sku": "GlobalStandard",
+      "capacity": 10
+    }
+  }
+}

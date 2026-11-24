@@ -1,0 +1,60 @@
+name: Deploy
+
+# Uniform `deploy` verb via Azure Developer CLI (per eps-demo-devx /
+# eps-demo-architecture), authenticated with GitHub OIDC federated credentials
+# — no client secret stored, consistent with "Managed Identity always, no
+# passwords" even for CI/CD. See docs/operations/deploy.md once scaffolded.
+#
+# Inert until `vars.AZURE_ENV_NAME` (and the other repo/environment variables
+# below) are configured — see https://aka.ms/azd-github-actions for the
+# federated-credential setup (`azd pipeline config`).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write # required for OIDC federated login — no client secret
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: vars.AZURE_ENV_NAME != ''
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Azure/setup-azd@v2
+
+      - name: Log in (federated / OIDC — no client secret)
+        run: |
+          azd auth login \
+            --client-id "${{ vars.AZURE_CLIENT_ID }}" \
+            --federated-credential-provider "github" \
+            --tenant-id "${{ vars.AZURE_TENANT_ID }}"
+
+      - name: Verify production custom domain configuration
+        run: |
+          test -n "${{ vars.AZURE_APP_CUSTOM_DOMAIN_CERTIFICATE_ID }}"
+        env:
+          AZURE_APP_CUSTOM_DOMAIN_NAME: strategy-heat.eps-demos.site
+          AZURE_APP_CUSTOM_DOMAIN_CERTIFICATE_ID: ${{ vars.AZURE_APP_CUSTOM_DOMAIN_CERTIFICATE_ID }}
+
+      - name: azd up
+        run: azd up --no-prompt
+        env:
+          AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+          AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          AZURE_APP_CUSTOM_DOMAIN_NAME: strategy-heat.eps-demos.site
+          AZURE_APP_CUSTOM_DOMAIN_CERTIFICATE_ID: ${{ vars.AZURE_APP_CUSTOM_DOMAIN_CERTIFICATE_ID }}
+
+  # TODO once services are defined in azure.yaml: add a PR-preview-deploy job
+  # (SWA/ACA preview slot) per eps-demo-repo-hygiene — separate from this
+  # merge-to-main production deploy.

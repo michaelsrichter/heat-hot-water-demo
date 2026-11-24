@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Azure jobs use Managed Identity. Anonymous storage access is off. The external Strategy connector uses one documented, vaulted Shared Key exception." />
+    <meta name="theme-color" content="#edf6fb" />
+    <title>Security and networking | HPD Heat &amp; Hot Water</title>
+    <link rel="stylesheet" href="/docs/assets.css" />
+    <script src="/docs/theme.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="docs-header">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">H</span>
+        <span>HPD Heat &amp; Hot Water</span>
+      </a>
+      <nav aria-label="Documentation navigation"><a href="/">Demo</a><a href="/docs/">Docs home</a><a href="/docs/architecture.html">Azure architecture</a><a href="/docs/foundry-integration.html">Foundry integration</a><a href="/docs/strategy-screenshots.html">Strategy views</a><a href="/docs/security-networking.html" aria-current="page">Security + networking</a><a href="/docs/azure-ai-costs.html">Azure + AI costs</a><a href="/docs/code-tour.html">Code tour</a></nav>
+      <button class="theme-button" type="button" data-theme-toggle aria-label="Use dark mode">
+        <span data-theme-label>Dark</span>
+      </button>
+    </header>
+    <div class="demo-banner">NYC housing response demo - not an official city service</div>
+    <main id="main-content" class="docs-main">
+      <section class="docs-hero">
+        <div class="docs-hero__copy">
+          <p class="eyebrow">Clear boundaries and accepted gaps</p>
+          <h1>Security and networking</h1>
+          <p class="lead">Azure jobs use Managed Identity. Anonymous storage access is off. The external Strategy connector uses one documented, vaulted Shared Key exception.</p>
+          <div class="hero-actions">
+            <a class="primary-link" href="/">Open live demo</a>
+            <a class="secondary-link" href="/docs/">All documentation</a>
+          </div>
+        </div>
+        
+    <aside class="docs-hero__aside">
+      <span>Current status</span>
+      <strong>The public repository contains no Strategy connector credential. The production operator must apply the organization&#39;s approved identity and network controls.</strong>
+    </aside>
+  
+      </section>
+      
+    <section class="fact-grid" aria-label="Key facts">
+      
+            <article class="fact-card">
+              <span>Anonymous ADLS</span>
+              <strong>Disabled</strong>
+              <p>Public users cannot browse or download the raw storage files.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>Azure jobs</span>
+              <strong>Managed Identity</strong>
+              <p>Role-based access writes and reads the required data.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>External connector</span>
+              <strong>Out of band</strong>
+              <p>Connector identities and credentials stay outside the public source.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>Foundry</span>
+              <strong>Separate roles</strong>
+              <p>Agent Consumer and model inference permissions are separate.</p>
+            </article>
+          
+    </section>
+  
+      
+    <section class="doc-flow" aria-labelledby="flow-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">How it moves</p>
+          <h2 id="flow-title">One clear path</h2>
+        </div>
+        <p>Read left to right. Every step keeps a different job.</p>
+      </div>
+      <ol class="flow-steps">
+        
+              <li>
+                <span>1</span>
+                <p>Browser can call only the review API</p>
+              </li>
+            
+              <li>
+                <span>2</span>
+                <p>API accepts saved scenarios, not arbitrary prompts</p>
+              </li>
+            
+              <li>
+                <span>3</span>
+                <p>Azure jobs use Managed Identity and data roles</p>
+              </li>
+            
+              <li>
+                <span>4</span>
+                <p>Raw data stays out of the browser</p>
+              </li>
+            
+              <li>
+                <span>5</span>
+                <p>External connector stays outside the public source</p>
+              </li>
+            
+              <li>
+                <span>6</span>
+                <p>Foundry receives only safe evidence and citations</p>
+              </li>
+            
+              <li>
+                <span>7</span>
+                <p>Public endpoint is rate-limited</p>
+              </li>
+            
+      </ol>
+    </section>
+  
+      
+      
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>security/threat-model.md</code></div>
+        <h2>Threat model</h2>
+
+    <div class="doc-table-wrap">
+      <table>
+        <thead><tr><th scope="col">Threat</th><th scope="col">Control</th><th scope="col">Current state</th></tr></thead>
+        <tbody>
+          <tr><td>Anonymous public reads ADLS</td><td>Anonymous Blob access off; Azure jobs use role-based access with Managed Identity</td><td>Implemented and data-plane tested</td></tr><tr><td>Storage shared key is exposed or misused</td><td>Disable shared-key authentication in Bicep and use role-based identity access</td><td>Implemented</td></tr><tr><td>Connector credentials are exposed in source or logs</td><td>Keep all external connector configuration out of the repository</td><td>Implemented</td></tr><tr><td>Raw PII reaches ADLS</td><td>Field allowlist; privacy contract test</td><td>Implemented and tested</td></tr><tr><td>A changed source overwrites evidence</td><td>Stable current files plus dated archive copy</td><td>Implemented</td></tr><tr><td>Stale source looks current</td><td>Manifest source window and explicit degraded state</td><td>API contract implemented</td></tr><tr><td>A malformed field reaches Strategy</td><td>Schema names, CSV types, and grain rules in the model contract</td><td>Documented</td></tr><tr><td>Public users trigger unbounded cost</td><td>Fixed scenarios and six-per-minute in-memory Practice limit</td><td>Practice only</td></tr><tr><td>Public app reaches Strategy or ADLS directly</td><td>Browser calls only the demo API; raw storage SDK stays server-side</td><td>Implemented</td></tr><tr><td>Strategy uses a local file and cannot refresh</td><td>Replace local snapshot with ADLS file-storage tables and schedule refresh</td><td>Manual step</td></tr>
+        </tbody>
+      </table>
+    </div>
+  
+<h3>Network posture</h3>
+<p>The storage account accepts only Microsoft Entra-authenticated access. Anonymous Blob access and shared-key authentication stay disabled. The app and ingestion jobs receive only the data-plane roles they need.</p>
+<p>The public deployment code does not create an external Strategy credential. Production operators must configure that integration under the organization&#39;s approved network and identity controls.</p>
+      </section>
+    
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>security/auth.md</code></div>
+        <h2>Identity and access</h2>
+<p>Public visitors do not sign in.</p>
+<h3>Azure writer</h3>
+<p>The ingestion process uses the developer or managed identity with Storage Blob Data Contributor. It can write current and archive files.</p>
+<h3>Strategy connector</h3>
+<p>The public source does not create or store a Strategy credential. A connector must be configured by the deployment operator with an identity approved by the organization. Connector names, resource IDs, users, and secrets remain outside the repository.</p>
+<h3>Shared-key protection</h3>
+<p>The Bicep deployment disables storage shared-key authentication. Public access does not mean credential-free access: anonymous Blob access is off, and Microsoft Entra role-based access controls the data plane.</p>
+      </section>
+    
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>security/secrets.md</code></div>
+        <h2>Secrets</h2>
+<p>The public repository and app settings contain no storage keys, client secrets, passwords, or access tokens.</p>
+<p>The application reads and writes ADLS with Microsoft Entra managed identity. Shared-key storage authentication is disabled in the public Bicep deployment.</p>
+<p>An external Strategy connector is an optional, environment-specific integration. Configure it outside this repository with the organization&#39;s approved identity and secret-management controls. Never copy connector values, screenshots of credential screens, or temporary passwords into source control.</p>
+      </section>
+    
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>security/privacy.md</code></div>
+        <h2>Privacy</h2>
+<p>The ADLS export uses an allowlist. It excludes:</p>
+<ul><li>apartment;</li><li>house number;</li><li>street name;</li><li>coordinates;</li><li>311 incident address;</li><li>311 resolution text;</li><li>owner-person data;</li><li>tenant data; and</li><li>names, email addresses, and phone numbers.</li></ul>
+<p>The public app receives counts, building IDs, source dates, boroughs, rule version, and safe process metadata. It does not receive a raw complaint problem, raw violation candidate, or 311 resolution record.</p>
+<p>The browser session ID is random and is not authentication. It stays in session storage and is not persisted by the server.</p>
+<p>Real public addresses remain blocked until privacy and template-owner review.</p>
+      </section>
+    
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>security/rate-limiting.md</code></div>
+        <h2>Rate limiting</h2>
+<p>Practice review runs are limited to six starts per minute for each combination of source address and random browser session ID. A request must name a saved scenario. Arbitrary prompts and building IDs are not accepted.</p>
+<p>The in-memory limit is suitable for local testing only. Before public release, use a shared server-side store so the limit cannot be bypassed by starting a new container replica.</p>
+<p>The app must also enforce:</p>
+<ul><li>maximum request bytes;</li><li>maximum run duration;</li><li>maximum records per run;</li><li>maximum output and citation size;</li><li>bounded concurrent runs; and</li><li>a global quota with a server-enforced stop.</li></ul>
+      </section>
+    
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>adr/0011-managed-identity-only-public-infrastructure.md</code></div>
+        <h2>ADR 0011: Keep the public deployment identity-only</h2>
+<ul><li>Status: accepted</li><li>Date: 2026-11-24</li><li>Context: The demo is published from a public repository. Deployment-specific</li></ul>
+<p>identifiers, connector credentials, personal ownership records, and policy bypass automation must not be part of public history.</p>
+<ul><li>Decision: Publish identity-only Bicep. Disable anonymous Blob access and</li></ul>
+<p>shared-key storage authentication. Keep external connector credentials and live resource IDs in the authorized deployment environment.</p>
+<ul><li>Consequences:</li></ul>
+<p>- Good: a public clone contains no storage key, connector password, or live Azure resource identifier. - Good: the data plane uses Microsoft Entra role assignments and managed identity. - Bad: an external Strategy connector needs a separate, approved operator setup. - Mitigation: the public runbook explains the boundary without publishing connector values.</p>
+      </section>
+    
+      
+    <section class="related-links">
+      <div>
+        <p class="eyebrow">Official references</p>
+        <h2>Read the service details</h2>
+      </div>
+      <ul>
+        <li><a href="https://learn.microsoft.com/azure/storage/common/storage-network-security">Storage network security</a></li><li><a href="https://learn.microsoft.com/azure/key-vault/general/rbac-guide">Key Vault RBAC</a></li><li><a href="https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview">Managed identities</a></li>
+      </ul>
+    </section>
+  
+    </main>
+    <footer class="docs-footer">
+      <div>
+        <strong>For demo purposes only</strong>
+        <p>Not an official city service. It does not provide legal or emergency advice.</p>
+      </div>
+      <nav aria-label="Footer navigation"><a href="/#limits">Privacy and data limits</a><a href="/#limits">Terms</a><a href="/docs/architecture.html">How this was built</a><a href="/docs/">Docs home</a><a href="https://learn.microsoft.com/azure/ai-foundry/">Microsoft Foundry</a></nav>
+      <p class="colophon">Last updated 2026-11-24 · local-pending · Heat and Hot Water implementation · Last updated 0 days ago - content current as of that date.</p>
+    </footer>
+  </body>
+</html>

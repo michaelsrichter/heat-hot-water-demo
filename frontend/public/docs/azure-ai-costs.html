@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Storage is small. Monitoring, app compute, and live model use are the likely cost drivers. Practice mode makes no paid model call." />
+    <meta name="theme-color" content="#edf6fb" />
+    <title>Azure and AI costs | HPD Heat &amp; Hot Water</title>
+    <link rel="stylesheet" href="/docs/assets.css" />
+    <script src="/docs/theme.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="docs-header">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">H</span>
+        <span>HPD Heat &amp; Hot Water</span>
+      </a>
+      <nav aria-label="Documentation navigation"><a href="/">Demo</a><a href="/docs/">Docs home</a><a href="/docs/architecture.html">Azure architecture</a><a href="/docs/foundry-integration.html">Foundry integration</a><a href="/docs/strategy-screenshots.html">Strategy views</a><a href="/docs/security-networking.html">Security + networking</a><a href="/docs/azure-ai-costs.html" aria-current="page">Azure + AI costs</a><a href="/docs/code-tour.html">Code tour</a></nav>
+      <button class="theme-button" type="button" data-theme-toggle aria-label="Use dark mode">
+        <span data-theme-label>Dark</span>
+      </button>
+    </header>
+    <div class="demo-banner">NYC housing response demo - not an official city service</div>
+    <main id="main-content" class="docs-main">
+      <section class="docs-hero">
+        <div class="docs-hero__copy">
+          <p class="eyebrow">Keep the demo cheap</p>
+          <h1>Azure and AI costs</h1>
+          <p class="lead">Storage is small. Monitoring, app compute, and live model use are the likely cost drivers. Practice mode makes no paid model call.</p>
+          <div class="hero-actions">
+            <a class="primary-link" href="/">Open live demo</a>
+            <a class="secondary-link" href="/docs/">All documentation</a>
+          </div>
+        </div>
+        
+    <aside class="docs-hero__aside">
+      <span>Current status</span>
+      <strong>No measured monthly total is claimed on this page. Use Azure Cost Management to compare actual spend with this design.</strong>
+    </aside>
+  
+      </section>
+      
+    <section class="fact-grid" aria-label="Key facts">
+      
+            <article class="fact-card">
+              <span>Budget alert</span>
+              <strong>USD 50/month</strong>
+              <p>Alerts are a warning. They do not stop paid resources.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>Storage</span>
+              <strong>Small demo set</strong>
+              <p>Four current files, a manifest, and dated archives.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>App compute</span>
+              <strong>Scale to zero</strong>
+              <p>Container Apps stays small when the demo is idle.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>AI</span>
+              <strong>Per live response</strong>
+              <p>Practice is deterministic and creates no model charge.</p>
+            </article>
+          
+    </section>
+  
+      
+      
+    <section class="cost-grid" aria-label="Cost drivers">
+      <article>
+        <span>Usually low for this demo</span>
+        <h2>Stored files</h2>
+        <p>Four small current CSVs, one manifest, and dated archives.</p>
+      </article>
+      <article>
+        <span>Measure during use</span>
+        <h2>Live model calls</h2>
+        <p>Input tokens, output tokens, request count, and retry count.</p>
+      </article>
+      <article>
+        <span>Watch as traffic grows</span>
+        <h2>App and logs</h2>
+        <p>Container starts, request volume, Log Analytics volume, and alert noise.</p>
+      </article>
+    </section>
+  
+      
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>cost/README.md</code></div>
+        <h2>Cost</h2>
+<p>The demo separates fixed platform cost from use-based AI and data cost.</p>
+<ul><li><a href="cost-to-run.md">cost-to-run.md</a> describes the services used today and the</li></ul>
+<p>likely bill drivers.</p>
+<ul><li><a href="cost-at-scale.md">cost-at-scale.md</a> explains what to measure at 10x and</li></ul>
+<p>100x usage.</p>
+<p>The Bicep budget starts at USD 50 per month. It alerts at 80% of actual spend and 100% of forecasted spend. A budget alert does not stop resources or guarantee a hard ceiling.</p>
+<p>The hosted app can scale to zero when idle. Practice mode makes no paid model call. The live briefing path creates model usage, so public access remains bounded by saved scenarios and rate limits.</p>
+      </section>
+    
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>cost/cost-to-run.md</code></div>
+        <h2>Cost to run</h2>
+<p>Azure has created the resource group, ADLS account, container, monitoring, registry, and Container Apps environment in the signed-in demo subscription. No measured billing amount is claimed yet.</p>
+<p>The new ADLS Gen2 path adds:</p>
+<ul><li>a standard locally redundant StorageV2 account;</li><li>a hot-tier data container;</li><li>storage diagnostic logs; and</li><li>read and write operations from ingestion and Strategy refresh.</li></ul>
+<p>The data size is small for a demo. Log Analytics and Container Apps are more likely cost drivers than Blob capacity.</p>
+<p>The template retains a USD 50 monthly budget alert. This is a default ceiling, not an approved spending commitment. Budget alerts do not stop paid workloads.</p>
+<p>Power BI/Fabric capacity is not required by this architecture.</p>
+      </section>
+    
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>cost/cost-at-scale.md</code></div>
+        <h2>Cost at scale</h2>
+<p>Storage cost changes with retained dated archives, file format, and refresh frequency. Strategy&#39;s scheduled import affects compute in the Strategy environment, not every visitor.</p>
+<p>Measure these cases after deployment:</p>
+
+    <div class="doc-table-wrap">
+      <table>
+        <thead><tr><th scope="col">Usage</th><th scope="col">Measure</th></tr></thead>
+        <tbody>
+          <tr><td>Current demo</td><td>Blob GB, write operations, Strategy refresh duration, Log Analytics GB</td></tr><tr><td>10x refreshes</td><td>Blob operations, Strategy refresh jobs, Container App starts</td></tr><tr><td>100x refreshes</td><td>Quotas, rate limits, archive retention, and global review run cap</td></tr>
+        </tbody>
+      </table>
+    </div>
+  
+<p>Delete archives by retention policy only after evidence retention is approved. Do not increase the archive window merely to preserve every demo run.</p>
+      </section>
+    
+      
+    <section class="related-links">
+      <div>
+        <p class="eyebrow">Official references</p>
+        <h2>Read the service details</h2>
+      </div>
+      <ul>
+        <li><a href="https://azure.microsoft.com/pricing/details/storage/blobs/">Blob Storage pricing</a></li><li><a href="https://azure.microsoft.com/pricing/details/container-apps/">Container Apps pricing</a></li><li><a href="https://azure.microsoft.com/pricing/details/monitor/">Azure Monitor pricing</a></li><li><a href="https://azure.microsoft.com/pricing/details/ai-foundry-models/">Microsoft Foundry model pricing</a></li><li><a href="https://azure.microsoft.com/pricing/details/container-registry/">Azure Container Registry pricing</a></li>
+      </ul>
+    </section>
+  
+    </main>
+    <footer class="docs-footer">
+      <div>
+        <strong>For demo purposes only</strong>
+        <p>Not an official city service. It does not provide legal or emergency advice.</p>
+      </div>
+      <nav aria-label="Footer navigation"><a href="/#limits">Privacy and data limits</a><a href="/#limits">Terms</a><a href="/docs/architecture.html">How this was built</a><a href="/docs/">Docs home</a><a href="https://learn.microsoft.com/azure/ai-foundry/">Microsoft Foundry</a></nav>
+      <p class="colophon">Last updated 2026-11-24 · local-pending · Heat and Hot Water implementation · Last updated 0 days ago - content current as of that date.</p>
+    </footer>
+  </body>
+</html>

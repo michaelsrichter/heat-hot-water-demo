@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Azure prepares the data. Strategy Mosaic gives every number one meaning. Foundry explains the evidence. Staff make the decision." />
+    <meta name="theme-color" content="#edf6fb" />
+    <title>Azure architecture | HPD Heat &amp; Hot Water</title>
+    <link rel="stylesheet" href="/docs/assets.css" />
+    <script src="/docs/theme.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="docs-header">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">H</span>
+        <span>HPD Heat &amp; Hot Water</span>
+      </a>
+      <nav aria-label="Documentation navigation"><a href="/">Demo</a><a href="/docs/">Docs home</a><a href="/docs/architecture.html" aria-current="page">Azure architecture</a><a href="/docs/foundry-integration.html">Foundry integration</a><a href="/docs/strategy-screenshots.html">Strategy views</a><a href="/docs/security-networking.html">Security + networking</a><a href="/docs/azure-ai-costs.html">Azure + AI costs</a><a href="/docs/code-tour.html">Code tour</a></nav>
+      <button class="theme-button" type="button" data-theme-toggle aria-label="Use dark mode">
+        <span data-theme-label>Dark</span>
+      </button>
+    </header>
+    <div class="demo-banner">NYC housing response demo - not an official city service</div>
+    <main id="main-content" class="docs-main">
+      <section class="docs-hero">
+        <div class="docs-hero__copy">
+          <p class="eyebrow">From public record to staff review</p>
+          <h1>Azure architecture</h1>
+          <p class="lead">Azure prepares the data. Strategy Mosaic gives every number one meaning. Foundry explains the evidence. Staff make the decision.</p>
+          <div class="hero-actions">
+            <a class="primary-link" href="/">Open live demo</a>
+            <a class="secondary-link" href="/docs/">All documentation</a>
+          </div>
+        </div>
+        
+      </section>
+      
+    <section class="fact-grid" aria-label="Key facts">
+      
+            <article class="fact-card">
+              <span>Data lake</span>
+              <strong>ADLS Gen2</strong>
+              <p>Stable current files plus dated archives.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>Semantic authority</span>
+              <strong>Strategy Mosaic</strong>
+              <p>Relationships, KPI formulas, dates, and hierarchies.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>Public runtime</span>
+              <strong>Container Apps</strong>
+              <p>Review API and static React interface.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>AI role</span>
+              <strong>Cited briefing</strong>
+              <p>Foundry explains supplied evidence but cannot change a KPI.</p>
+            </article>
+          
+    </section>
+  
+      
+    <section class="doc-flow" aria-labelledby="flow-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">How it moves</p>
+          <h2 id="flow-title">One clear path</h2>
+        </div>
+        <p>Read left to right. Every step keeps a different job.</p>
+      </div>
+      <ol class="flow-steps">
+        
+              <li>
+                <span>1</span>
+                <p>Read three NYC public datasets</p>
+              </li>
+            
+              <li>
+                <span>2</span>
+                <p>Prepare safe source files</p>
+              </li>
+            
+              <li>
+                <span>3</span>
+                <p>Save stable and archived ADLS files</p>
+              </li>
+            
+              <li>
+                <span>4</span>
+                <p>Import four Strategy tables</p>
+              </li>
+            
+              <li>
+                <span>5</span>
+                <p>Define measures and relationships</p>
+              </li>
+            
+              <li>
+                <span>6</span>
+                <p>Show one governed dashboard</p>
+              </li>
+            
+              <li>
+                <span>7</span>
+                <p>Explain selected evidence with Foundry</p>
+              </li>
+            
+              <li>
+                <span>8</span>
+                <p>Send the result to a person</p>
+              </li>
+            
+      </ol>
+    </section>
+  
+      
+      
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>architecture/overview.md</code></div>
+        <h2>Architecture overview</h2>
+<p>The demo helps a supervisor review building records without assembling the sources, definitions, and guidance by hand.</p>
+<h3>Strategy-first data path</h3>
+<aside class="doc-note"><strong>Diagram summary</strong><p>The served page uses the plain-language flow above instead of a runtime Mermaid block.</p></aside>
+<p>ADLS Gen2 is built on Blob Storage and provides a hierarchical namespace. Strategy imports CSV files through its Azure Data Lake Storage Gen2 file-storage connector. Strategy owns the relationships, attributes, measures, and hierarchies.</p>
+<h3>Why these parts are separate</h3>
+<p>The Azure ingestion job reads each source at its original grain. It writes:</p>
+<ul><li>complaint problems;</li><li>candidate violations;</li><li>supporting 311 requests;</li><li>a building-level summary; and</li><li>a process manifest.</li></ul>
+<p>Strategy maps <code>building_id</code> and creates the business view. The app reads the process manifest and the approved review result. It does not access raw Blob Storage data from the browser.</p>
+<h3>Refresh</h3>
+<p>The file layout keeps stable current paths, one Strategy folder per table, and immutable dated archives. Strategy&#39;s Daily refresh replaces data from the <code>strategy-*</code> folders. The archive preserves the evidence for each run.</p>
+<h3>Current status</h3>
+<p>The deployment creates an ADLS Gen2 account and the <code>heat-hot-water</code> container. Resource names stay in the authorized Azure deployment. Current files and a dated archive are present.</p>
+<p>The app uses managed identity. Shared-key storage authentication is disabled in the public Bicep deployment. Any external Strategy connection is configured outside this repository.</p>
+      </section>
+    
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>architecture/data-flow.md</code></div>
+        <h2>Data flow</h2>
+<h3>1. Read public sources</h3>
+<p>The Azure ingestion process reads:</p>
+<ul><li>HPD complaints and problems;</li><li>HPD housing-code violation candidates; and</li><li>NYC 311 heat and hot-water requests.</li></ul>
+<p>The allowlist excludes apartments, addresses, coordinates, person fields, owner details, and 311 resolution text.</p>
+<h3>2. Preserve source grain</h3>
+<p>The process writes separate current files:</p>
+
+    <div class="doc-table-wrap">
+      <table>
+        <thead><tr><th scope="col">Path</th><th scope="col">Grain</th></tr></thead>
+        <tbody>
+          <tr><td><code>current/complaint-problems.csv</code></td><td>One problem record</td></tr><tr><td><code>current/violation-candidates.csv</code></td><td>One candidate violation</td></tr><tr><td><code>current/requests-311.csv</code></td><td>One 311 request</td></tr><tr><td><code>current/building-review.csv</code></td><td>One building</td></tr><tr><td><code>current/manifest.json</code></td><td>One ingestion run</td></tr>
+        </tbody>
+      </table>
+    </div>
+  
+<p>The same CSVs are copied to one-file Strategy folders: <code>strategy-buildings/</code>, <code>strategy-complaints/</code>, <code>strategy-violations/</code>, and <code>strategy-requests-311/</code>. This layout meets Strategy&#39;s requirement that a folder share one file type and schema.</p>
+<p>The same files are copied under <code>archive/YYYY-MM-DD/</code>.</p>
+<h3>3. Create building facts</h3>
+<p>The building summary counts distinct <code>complaint_id</code>, not problem rows. Violation text search creates candidates only. The process does not join one complaint to one violation.</p>
+<p>Every candidate uses <code>needs_review</code> and every review state uses <code>needs_verification</code> until a qualified owner approves the rule.</p>
+<h3>4. Import into Strategy</h3>
+<p>Strategy&#39;s Azure Data Lake Storage Gen2 connector reads the stable current files. The Mosaic model maps <code>building_id</code> across the source tables.</p>
+<p>The intended hierarchy is:</p>
+<ul><li><code>Borough</code>;</li><li><code>Building</code>; and</li><li>source facts such as Complaint, Candidate Violation, and 311 Request.</li></ul>
+<h3>5. Refresh and present</h3>
+<p>Strategy schedules the Mosaic import refresh. The dashboard and review service must use the same <code>rule_version</code> and source window. If the manifest is stale or incomplete, the app must show a degraded state.</p>
+<h3>6. Prepare a cited briefing</h3>
+<p>The public app sends the governed Strategy metrics, synthetic practice record, and allowed citations to the <code>hpd-review-agent</code>.</p>
+<p>The agent explains:</p>
+<ul><li>what the Strategy metric shows;</li><li>what remains unknown;</li><li>which source and official HPD guidance to verify; and</li><li>a possible staff follow-up.</li></ul>
+<p>The agent cannot issue a violation, contact a resident, recalculate a Strategy metric, or choose a legal action. In local Practice mode, a deterministic provider returns the same shape without calling a paid model.</p>
+<h3>7. Staff review</h3>
+<p>A housing staff member checks the evidence and makes the official decision outside the demo. The review list is not a legal or emergency-response queue.</p>
+      </section>
+    
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>architecture/azure-services.md</code></div>
+        <h2>Azure services</h2>
+
+    <div class="doc-table-wrap">
+      <table>
+        <thead><tr><th scope="col">Service</th><th scope="col">Purpose</th><th scope="col">Status</th></tr></thead>
+        <tbody>
+          <tr><td>ADLS Gen2 Storage</td><td>Stores stable current files and dated archives for Strategy</td><td>Implemented in Bicep</td></tr><tr><td>Azure Container Apps</td><td>Hosts the review API and public Practice page</td><td>Prepared</td></tr><tr><td>Azure Container Registry</td><td>Stores the application image</td><td>Prepared</td></tr><tr><td>Application Insights</td><td>Records safe app operations</td><td>Prepared</td></tr><tr><td>Log Analytics</td><td>Stores storage, app, and deployment diagnostics</td><td>Prepared</td></tr><tr><td>Azure Budget</td><td>Sends actual and forecast cost alerts</td><td>Prepared</td></tr><tr><td>Microsoft Foundry project</td><td>Hosts the cited HPD briefing agent and model deployment</td><td>Deployed</td></tr>
+        </tbody>
+      </table>
+    </div>
+  
+<h3>Foundry briefing</h3>
+<p>The <code>hpd-review-agent</code> is a code-deployed hosted agent. It uses the Responses protocol and the configured <code>gpt-5.4-mini</code> deployment.</p>
+<p>Strategy Mosaic remains the source of metric definitions. The agent cannot recalculate a Strategy metric. It can explain the supplied evidence, unknowns, suggested follow-up, and linked HPD guidance.</p>
+<p>The deployed demo calls <code>hpd-review-agent</code> through <code>FOUNDRY_AGENT_ENDPOINT</code>. Local tests use the deterministic Practice provider. That fallback is visible in the user interface and never pretends to be a live model response.</p>
+<p>The agent is deployed as an active hosted agent version and the public app is authorized with the Foundry Agent Consumer role. The agent identity has the separate Cognitive Services OpenAI User role needed to call the model.</p>
+<h3>ADLS controls</h3>
+<ul><li>Hierarchical namespace is enabled.</li><li>Anonymous blob access is disabled.</li><li>Shared storage key access is disabled.</li><li>The app and developer receive Storage Blob Data Contributor only where they</li></ul>
+<p>need to write.</p>
+<ul><li>External Strategy connector credentials are configured outside the repository.</li></ul>
+      </section>
+    
+      
+    <section class="related-links">
+      <div>
+        <p class="eyebrow">Official references</p>
+        <h2>Read the service details</h2>
+      </div>
+      <ul>
+        <li><a href="https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction">ADLS Gen2 overview</a></li><li><a href="https://learn.microsoft.com/azure/container-apps/overview">Azure Container Apps overview</a></li><li><a href="https://learn.microsoft.com/azure/ai-foundry/what-is-azure-ai-foundry">Microsoft Foundry overview</a></li>
+      </ul>
+    </section>
+  
+    </main>
+    <footer class="docs-footer">
+      <div>
+        <strong>For demo purposes only</strong>
+        <p>Not an official city service. It does not provide legal or emergency advice.</p>
+      </div>
+      <nav aria-label="Footer navigation"><a href="/#limits">Privacy and data limits</a><a href="/#limits">Terms</a><a href="/docs/architecture.html">How this was built</a><a href="/docs/">Docs home</a><a href="https://learn.microsoft.com/azure/ai-foundry/">Microsoft Foundry</a></nav>
+      <p class="colophon">Last updated 2026-11-24 · local-pending · Heat and Hot Water implementation · Last updated 0 days ago - content current as of that date.</p>
+    </footer>
+  </body>
+</html>

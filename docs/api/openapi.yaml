@@ -1,0 +1,41 @@
+openapi: 3.1.0
+info:
+  title: Heat and Hot Water Review Demo
+  version: 0.1.0
+paths:
+  /api/overview:
+    get:
+      summary: Read the available Practice scenarios
+      responses:
+        "200":
+          description: Practice overview
+  /api/reviews/run:
+    post:
+      summary: Run one bounded Practice scenario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [scenario_id]
+              properties:
+                scenario_id:
+                  type: string
+                  pattern: "^[a-z0-9-]+$"
+      responses:
+        "200":
+          description: Review worklist
+        "400":
+          description: Missing browser session
+        "404":
+          description: Unknown scenario
+        "429":
+          description: Review limit reached
+  /health:
+    get:
+      summary: Read the explicit Practice health state
+      responses:
+        "200":
+          description: Health result
+

@@ -1,0 +1,1 @@
+Prepare a cited, plain-language HPD heat and hot-water building review plan from governed Strategy Mosaic metrics, synthetic practice records, owner teams, and official guidance; never calculate metrics or decide enforcement.

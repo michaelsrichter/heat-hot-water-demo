@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="The hosted agent receives the governed Strategy snapshot, safe practice records, and approved citations. It returns a briefing for staff review." />
+    <meta name="theme-color" content="#edf6fb" />
+    <title>Foundry integration | HPD Heat &amp; Hot Water</title>
+    <link rel="stylesheet" href="/docs/assets.css" />
+    <script src="/docs/theme.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="docs-header">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">H</span>
+        <span>HPD Heat &amp; Hot Water</span>
+      </a>
+      <nav aria-label="Documentation navigation"><a href="/">Demo</a><a href="/docs/">Docs home</a><a href="/docs/architecture.html">Azure architecture</a><a href="/docs/foundry-integration.html" aria-current="page">Foundry integration</a><a href="/docs/strategy-screenshots.html">Strategy views</a><a href="/docs/security-networking.html">Security + networking</a><a href="/docs/azure-ai-costs.html">Azure + AI costs</a><a href="/docs/code-tour.html">Code tour</a></nav>
+      <button class="theme-button" type="button" data-theme-toggle aria-label="Use dark mode">
+        <span data-theme-label>Dark</span>
+      </button>
+    </header>
+    <div class="demo-banner">NYC housing response demo - not an official city service</div>
+    <main id="main-content" class="docs-main">
+      <section class="docs-hero">
+        <div class="docs-hero__copy">
+          <p class="eyebrow">How the AI briefing works</p>
+          <h1>Foundry integration</h1>
+          <p class="lead">The hosted agent receives the governed Strategy snapshot, safe practice records, and approved citations. It returns a briefing for staff review.</p>
+          <div class="hero-actions">
+            <a class="primary-link" href="/">Open live demo</a>
+            <a class="secondary-link" href="/docs/">All documentation</a>
+          </div>
+        </div>
+        
+    <aside class="docs-hero__aside">
+      <span>Current status</span>
+      <strong>Current public path: governed snapshot -&gt; hosted agent -&gt; cited briefing. Planned MCP path: Strategy Mosaic query -&gt; governed result -&gt; same hosted agent.</strong>
+    </aside>
+  
+      </section>
+      
+    <section class="fact-grid" aria-label="Key facts">
+      
+            <article class="fact-card">
+              <span>Current source</span>
+              <strong>Governed snapshot</strong>
+              <p>The live hosted agent receives the ADLS-backed pipeline manifest.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>Agent protocol</span>
+              <strong>Responses</strong>
+              <p>The app calls the hosted agent&#39;s /responses endpoint.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>Model</span>
+              <strong>Config-driven</strong>
+              <p>The agent reads the deployment from environment configuration.</p>
+            </article>
+          
+            <article class="fact-card">
+              <span>MCP status</span>
+              <strong>Prepared, not live</strong>
+              <p>OAuth works, but the target Mosaic model is not exposed to the consented user.</p>
+            </article>
+          
+    </section>
+  
+      
+    <section class="doc-flow" aria-labelledby="flow-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">How it moves</p>
+          <h2 id="flow-title">One clear path</h2>
+        </div>
+        <p>Read left to right. Every step keeps a different job.</p>
+      </div>
+      <ol class="flow-steps">
+        
+              <li>
+                <span>1</span>
+                <p>Choose one saved review scenario</p>
+              </li>
+            
+              <li>
+                <span>2</span>
+                <p>Load governed Strategy metrics</p>
+              </li>
+            
+              <li>
+                <span>3</span>
+                <p>Create synthetic building review items</p>
+              </li>
+            
+              <li>
+                <span>4</span>
+                <p>Call the Foundry hosted agent</p>
+              </li>
+            
+              <li>
+                <span>5</span>
+                <p>Apply the agent instructions</p>
+              </li>
+            
+              <li>
+                <span>6</span>
+                <p>Call the configured model deployment</p>
+              </li>
+            
+              <li>
+                <span>7</span>
+                <p>Return text and citations</p>
+              </li>
+            
+              <li>
+                <span>8</span>
+                <p>Ask a staff member to verify</p>
+              </li>
+            
+      </ol>
+    </section>
+  
+      
+      
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>adr/0010-foundry-briefing-agent.md</code></div>
+        <h2>ADR 0010: Use a hosted agent that cannot recalculate Strategy metrics</h2>
+<ul><li>Status: accepted</li><li>Date: 2026-11-19</li><li>Context: Housing staff need a plain-language explanation of the governed</li></ul>
+<p>Strategy snapshot, missing details, and linked HPD guidance. The agent must not invent metrics or make enforcement decisions.</p>
+<ul><li>Decision: Use a Microsoft Foundry hosted agent with the Responses protocol.</li></ul>
+<p>Strategy Mosaic remains the source of metric definitions and values. The agent receives only safe evidence and approved citations.</p>
+<ul><li>Consequences:</li></ul>
+<p>- The same Strategy metric meaning appears in the dashboard, app, and briefing. - The agent code is configuration-driven and can be deployed from <code>azure.yaml</code>. - Local and CI tests use the deterministic Practice provider instead of a paid model. - A staff member must verify every suggested follow-up before taking action. - Live use is deployed with separate consumer and model-inference identities.</p>
+      </section>
+    
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>operations/strategy-mcp-setup.md</code></div>
+        <h2>Connect Strategy Mosaic MCP in Microsoft Foundry</h2>
+<h3>Values for the Add Model Context Protocol tool dialog</h3>
+
+    <div class="doc-table-wrap">
+      <table>
+        <thead><tr><th scope="col">Foundry field</th><th scope="col">Value</th></tr></thead>
+        <tbody>
+          <tr><td>Name</td><td><code>strategy-mosaic-mcp</code></td></tr><tr><td>Remote MCP Server endpoint</td><td><code>https://studio.strategy.com/collaboration/mcp/mosaic</code></td></tr><tr><td>Authentication</td><td><code>OAuth Identity Passthrough</code></td></tr><tr><td>Client ID</td><td>The OAuth Client ID supplied by the Strategy environment</td></tr><tr><td>Client secret</td><td>The matching OAuth Client Secret supplied by the Strategy environment</td></tr><tr><td>Token URL</td><td><code>https://studio.strategy.com/collaboration/token</code></td></tr><tr><td>Auth URL</td><td><code>https://studio.strategy.com/collaboration/authorize</code></td></tr><tr><td>Refresh URL</td><td><code>https://studio.strategy.com/collaboration/token</code></td></tr><tr><td>Scopes</td><td><code>offline_access mcp:stream</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  
+<p>Use the user-visible Strategy environment URL <code>https://studio.strategy.com</code> when Foundry asks for a separate Strategy MCP base address.</p>
+<p>Do not use a Strategy user name, password, tenant code, or API token in the Client ID or Client Secret fields.</p>
+<h3>Callback allowlist</h3>
+<p>The Foundry connection created for this project uses:</p>
+<p><code>https://global.consent.azure-apim.net/redirect/7562f5510708426eacbf4e931db046ad</code></p>
+<p>A Strategy administrator should allow that exact URL, or the supported wildcard:</p>
+<p><code>https://global.consent.azure-apim.net/redirect/*</code></p>
+<p>They add it in Strategy Workstation under <strong>Environment Properties &gt; Library &gt; Model Context Protocol for Agent &gt; Callback URL</strong>, save, and restart the Library/Collaboration service if required.</p>
+<p><code>global.consent.azure-apim.net</code> is Microsoft&#39;s OAuth consent broker. It receives the authorization code from Strategy and passes the resulting connection token to Foundry. It does not store or query HPD data.</p>
+<h3>Foundry connection status</h3>
+<p>The <code>strategy-mosaic-mcp</code> connection and <code>strategy-tools</code> toolbox are created. OAuth consent is complete. Authenticated <code>tools/list</code>, <code>get_projects</code>, and <code>get_models</code> calls succeed.</p>
+<p>The signed-in Strategy user can currently access:</p>
+<ul><li>project: <code>Strategy Showcase</code>;</li><li>model: <code>Retail Orders Sales Performance Model (global)</code>.</li></ul>
+<p>The MCP server does not currently expose the <strong>Heat and Hot Water Review Model</strong> to this user. A Strategy content owner or administrator must:</p>
+<ol><li>publish that Mosaic model in the Strategy Showcase project, or move an</li></ol>
+<p>equivalent model there;</p>
+<ol><li>certify it for MCP access; and</li><li>grant the consented Strategy user view access to it.</li></ol>
+<h3>Verify</h3>
+<p>From the repository root:</p>
+
+    <figure class="code-sample">
+      <figcaption>
+        <strong>Source example</strong>
+        
+      </figcaption>
+      <pre tabindex="0" aria-label="Source example"><code data-language="powershell">$env:AZURE_DEV_USER_AGENT = &quot;microsoft_foundry_skill&quot;
+azd ai agent invoke hpd-review-agent --new-session &quot;Use Strategy Mosaic MCP to list the Heat and Hot Water model metrics and return the current Open Complaints and Open Candidate Violations values.&quot;</code></pre>
+    </figure>
+  
+<p>A successful response names the <strong>Heat and Hot Water Review Model</strong>, reads its governed semantics, and cites Mosaic MCP as the source of the current values.</p>
+<p>Until the model is exposed, keep the public demo on the governed ADLS snapshot. The hosted agent remains healthy and uses the snapshot; the Foundry toolbox is ready for a user-authenticated client.</p>
+      </section>
+    
+      <section class="source-section">
+        <div class="source-section__label">Canonical source: <code>architecture/azure-services.md</code></div>
+        <h2>Azure services</h2>
+
+    <div class="doc-table-wrap">
+      <table>
+        <thead><tr><th scope="col">Service</th><th scope="col">Purpose</th><th scope="col">Status</th></tr></thead>
+        <tbody>
+          <tr><td>ADLS Gen2 Storage</td><td>Stores stable current files and dated archives for Strategy</td><td>Implemented in Bicep</td></tr><tr><td>Azure Container Apps</td><td>Hosts the review API and public Practice page</td><td>Prepared</td></tr><tr><td>Azure Container Registry</td><td>Stores the application image</td><td>Prepared</td></tr><tr><td>Application Insights</td><td>Records safe app operations</td><td>Prepared</td></tr><tr><td>Log Analytics</td><td>Stores storage, app, and deployment diagnostics</td><td>Prepared</td></tr><tr><td>Azure Budget</td><td>Sends actual and forecast cost alerts</td><td>Prepared</td></tr><tr><td>Microsoft Foundry project</td><td>Hosts the cited HPD briefing agent and model deployment</td><td>Deployed</td></tr>
+        </tbody>
+      </table>
+    </div>
+  
+<h3>Foundry briefing</h3>
+<p>The <code>hpd-review-agent</code> is a code-deployed hosted agent. It uses the Responses protocol and the configured <code>gpt-5.4-mini</code> deployment.</p>
+<p>Strategy Mosaic remains the source of metric definitions. The agent cannot recalculate a Strategy metric. It can explain the supplied evidence, unknowns, suggested follow-up, and linked HPD guidance.</p>
+<p>The deployed demo calls <code>hpd-review-agent</code> through <code>FOUNDRY_AGENT_ENDPOINT</code>. Local tests use the deterministic Practice provider. That fallback is visible in the user interface and never pretends to be a live model response.</p>
+<p>The agent is deployed as an active hosted agent version and the public app is authorized with the Foundry Agent Consumer role. The agent identity has the separate Cognitive Services OpenAI User role needed to call the model.</p>
+<h3>ADLS controls</h3>
+<ul><li>Hierarchical namespace is enabled.</li><li>Anonymous blob access is disabled.</li><li>Shared storage key access is disabled.</li><li>The app and developer receive Storage Blob Data Contributor only where they</li></ul>
+<p>need to write.</p>
+<ul><li>External Strategy connector credentials are configured outside the repository.</li></ul>
+      </section>
+    
+      
+    <section class="related-links">
+      <div>
+        <p class="eyebrow">Official references</p>
+        <h2>Read the service details</h2>
+      </div>
+      <ul>
+        <li><a href="https://learn.microsoft.com/azure/ai-foundry/agents/overview">Microsoft Foundry agents</a></li><li><a href="https://learn.microsoft.com/azure/ai-foundry/how-to/managed-identities">Foundry managed identities</a></li>
+      </ul>
+    </section>
+  
+    </main>
+    <footer class="docs-footer">
+      <div>
+        <strong>For demo purposes only</strong>
+        <p>Not an official city service. It does not provide legal or emergency advice.</p>
+      </div>
+      <nav aria-label="Footer navigation"><a href="/#limits">Privacy and data limits</a><a href="/#limits">Terms</a><a href="/docs/architecture.html">How this was built</a><a href="/docs/">Docs home</a><a href="https://learn.microsoft.com/azure/ai-foundry/">Microsoft Foundry</a></nav>
+      <p class="colophon">Last updated 2026-11-24 · local-pending · Heat and Hot Water implementation · Last updated 0 days ago - content current as of that date.</p>
+    </footer>
+  </body>
+</html>

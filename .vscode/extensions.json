@@ -1,0 +1,15 @@
+{
+  // Stack-agnostic recommendations (eps-demo-devx). Add stack-specific
+  // linters/formatters once the app is scaffolded.
+  "recommendations": [
+    "ms-azuretools.vscode-bicep",
+    "ms-vscode.azure-account",
+    "ms-azuretools.vscode-azureresourcegroups",
+    "github.copilot",
+    "github.copilot-chat",
+    "github.vscode-github-actions",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "streetsidesoftware.code-spell-checker"
+  ]
+}

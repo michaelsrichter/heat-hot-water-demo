@@ -1,0 +1,41 @@
+{
+  "mode": "mock",
+  "project": "Strategy Showcase",
+  "model": "Heat and Hot Water Review Model",
+  "notice": "Simulated MCP response for demo presentation. Tool names and response shape match the connected Strategy Mosaic MCP server; metric values come from the latest governed Strategy export.",
+  "trace": [
+    {
+      "tool": "strategy-mosaic-mcp___get_projects",
+      "purpose": "Find projects the signed-in Strategy user can access.",
+      "request": {},
+      "response_preview": "Available Projects (1): Strategy Showcase"
+    },
+    {
+      "tool": "strategy-mosaic-mcp___get_models",
+      "purpose": "Find the certified Heat and Hot Water model.",
+      "request": {
+        "project": "Strategy Showcase",
+        "only_mosaic_models": true
+      },
+      "response_preview": "Heat and Hot Water Review Model | Type: Mosaic Model"
+    },
+    {
+      "tool": "strategy-mosaic-mcp___get_semantics",
+      "purpose": "Read the governed metric names and definitions before querying.",
+      "request": {
+        "project": "Strategy Showcase",
+        "model": "Heat and Hot Water Review Model"
+      },
+      "response_preview": "Open Complaints = SUM(Open Complaint Count); Open Candidate Violations = SUM(Open Candidate Violation Count); Distinct Complaints; Candidate Violation Count; Borough"
+    },
+    {
+      "tool": "strategy-mosaic-mcp___query",
+      "purpose": "Run one read-only query for the current KPI values and borough breakdown.",
+      "request": {
+        "project": "Strategy Showcase",
+        "query": "SELECT governed metrics for Open Complaints and Open Candidate Violations, grouped by Borough, LIMIT 10"
+      },
+      "response_preview": "Rows returned for Bronx, Brooklyn, Manhattan, Queens, and Staten Island."
+    }
+  ]
+}

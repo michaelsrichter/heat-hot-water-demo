@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+#
+# Azure Developer CLI project file. `azd up` is the uniform `deploy` verb
+# (eps-demo-devx / eps-demo-architecture). infra/main.bicep is subscription-
+# scoped and creates its own resource group, so `azd up` brings up a brand new
+# environment from scratch — no pre-existing resource group required.
+name: heat-hot-water-demo
+metadata:
+  template: eps-demos-template@0.1.0
+infra:
+  path: infra
+  module: main
+hooks:
+  preprovision:
+    posix:
+      shell: sh
+      run: infra/hooks/preprovision.sh
+      interactive: false
+      continueOnError: false
+    windows:
+      shell: pwsh
+      run: infra/hooks/preprovision.ps1
+      interactive: false
+      continueOnError: false
+
+services:
+  app:
+    project: .
+    language: python
+    host: containerapp
+    docker:
+      path: Dockerfile
+      context: .
+      remoteBuild: true
+  ai-project:
+    host: azure.ai.project
+    deployments:
+      - name: gpt-5-4-mini
+        model:
+          format: OpenAI
+          name: gpt-5.4-mini
+          version: "2026-03-17"
+        sku:
+          name: GlobalStandard
+          capacity: 10
+  hpd-review-agent:
+    project: src/hpd-review-agent
+    host: azure.ai.agent
+    language: python
+    uses:
+      - ai-project
+    kind: hosted
+    name: hpd-review-agent
+    description: Prepares cited, plain-language HPD heat and hot-water review briefings.
+    startupCommand: uvicorn main:app --host 0.0.0.0 --port 8088
+    codeConfiguration:
+      runtime: python_3_13
+      entryPoint: main.py
+      dependencyResolution: remote_build
+    container:
+      resources:
+        cpu: "0.5"
+        memory: 1Gi
+    environmentVariables:
+      - name: AZURE_AI_MODEL_DEPLOYMENT_NAME
+        value: gpt-5-4-mini
+      - name: AZURE_OPENAI_API_VERSION
+        value: "2025-04-01-preview"
+    protocols:
+      - protocol: responses
+        version: 1.0.0
+  strategy-tools:
+    host: azure.ai.toolbox
+    tools:
+      - type: mcp
+        server_label: strategy_mosaic
+        project_connection_id: strategy-mosaic-mcp
+        require_approval: never

@@ -1,0 +1,366 @@
+{
+  "pages": [
+    {
+      "slug": "architecture",
+      "title": "Azure architecture",
+      "navLabel": "Azure architecture",
+      "eyebrow": "From public record to staff review",
+      "lead": "Azure prepares the data. Strategy Mosaic gives every number one meaning. Foundry explains the evidence. Staff make the decision.",
+      "sources": [
+        "architecture/overview.md",
+        "architecture/data-flow.md",
+        "architecture/azure-services.md"
+      ],
+      "facts": [
+        {
+          "label": "Data lake",
+          "value": "ADLS Gen2",
+          "detail": "Stable current files plus dated archives."
+        },
+        {
+          "label": "Semantic authority",
+          "value": "Strategy Mosaic",
+          "detail": "Relationships, KPI formulas, dates, and hierarchies."
+        },
+        {
+          "label": "Public runtime",
+          "value": "Container Apps",
+          "detail": "Review API and static React interface."
+        },
+        {
+          "label": "AI role",
+          "value": "Cited briefing",
+          "detail": "Foundry explains supplied evidence but cannot change a KPI."
+        }
+      ],
+      "flow": [
+        "Read three NYC public datasets",
+        "Prepare safe source files",
+        "Save stable and archived ADLS files",
+        "Import four Strategy tables",
+        "Define measures and relationships",
+        "Show one governed dashboard",
+        "Explain selected evidence with Foundry",
+        "Send the result to a person"
+      ],
+      "links": [
+        {
+          "label": "ADLS Gen2 overview",
+          "href": "https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction"
+        },
+        {
+          "label": "Azure Container Apps overview",
+          "href": "https://learn.microsoft.com/azure/container-apps/overview"
+        },
+        {
+          "label": "Microsoft Foundry overview",
+          "href": "https://learn.microsoft.com/azure/ai-foundry/what-is-azure-ai-foundry"
+        }
+      ]
+    },
+    {
+      "slug": "foundry-integration",
+      "title": "Foundry integration",
+      "navLabel": "Foundry integration",
+      "eyebrow": "How the AI briefing works",
+      "lead": "The hosted agent receives the governed Strategy snapshot, safe practice records, and approved citations. It returns a briefing for staff review.",
+      "sources": [
+        "adr/0010-foundry-briefing-agent.md",
+        "operations/strategy-mcp-setup.md",
+        "architecture/azure-services.md"
+      ],
+      "facts": [
+        {
+          "label": "Current source",
+          "value": "Governed snapshot",
+          "detail": "The live hosted agent receives the ADLS-backed pipeline manifest."
+        },
+        {
+          "label": "Agent protocol",
+          "value": "Responses",
+          "detail": "The app calls the hosted agent's /responses endpoint."
+        },
+        {
+          "label": "Model",
+          "value": "Config-driven",
+          "detail": "The agent reads the deployment from environment configuration."
+        },
+        {
+          "label": "MCP status",
+          "value": "Prepared, not live",
+          "detail": "OAuth works, but the target Mosaic model is not exposed to the consented user."
+        }
+      ],
+      "flow": [
+        "Choose one saved review scenario",
+        "Load governed Strategy metrics",
+        "Create synthetic building review items",
+        "Call the Foundry hosted agent",
+        "Apply the agent instructions",
+        "Call the configured model deployment",
+        "Return text and citations",
+        "Ask a staff member to verify"
+      ],
+      "callout": "Current public path: governed snapshot -> hosted agent -> cited briefing. Planned MCP path: Strategy Mosaic query -> governed result -> same hosted agent.",
+      "links": [
+        {
+          "label": "Microsoft Foundry agents",
+          "href": "https://learn.microsoft.com/azure/ai-foundry/agents/overview"
+        },
+        {
+          "label": "Foundry managed identities",
+          "href": "https://learn.microsoft.com/azure/ai-foundry/how-to/managed-identities"
+        }
+      ]
+    },
+    {
+      "slug": "strategy-screenshots",
+      "title": "Strategy interface views",
+      "navLabel": "Strategy views",
+      "eyebrow": "Model, dashboard, and refresh",
+      "lead": "These accessible HTML views rebuild the verified Strategy setup without exposing connection secrets or requiring the private portal.",
+      "sources": [
+        "operations/strategy-screenshots.md",
+        "operations/manual-strategy-setup.md"
+      ],
+      "facts": [
+        {
+          "label": "Mosaic model",
+          "value": "4 source tables",
+          "detail": "Buildings, complaints, violations, and 311 requests."
+        },
+        {
+          "label": "Shared key",
+          "value": "building_id",
+          "detail": "Connects Borough and Building facts without merging grains."
+        },
+        {
+          "label": "Refresh",
+          "value": "Daily",
+          "detail": "Replace existing data in all four Strategy folders."
+        },
+        {
+          "label": "View type",
+          "value": "HTML rebuild",
+          "detail": "Not a live or raw Strategy screenshot."
+        }
+      ],
+      "visual": "strategy",
+      "callout": "Do not capture storage keys, usernames, passwords, OAuth client secrets, or callback tokens in published screenshots.",
+      "links": []
+    },
+    {
+      "slug": "security-networking",
+      "title": "Security and networking",
+      "navLabel": "Security + networking",
+      "eyebrow": "Clear boundaries and accepted gaps",
+      "lead": "Azure jobs use Managed Identity. Anonymous storage access is off. The external Strategy connector uses one documented, vaulted Shared Key exception.",
+      "sources": [
+        "security/threat-model.md",
+        "security/auth.md",
+        "security/secrets.md",
+        "security/privacy.md",
+        "security/rate-limiting.md",
+        "adr/0011-managed-identity-only-public-infrastructure.md"
+      ],
+      "facts": [
+        {
+          "label": "Anonymous ADLS",
+          "value": "Disabled",
+          "detail": "Public users cannot browse or download the raw storage files."
+        },
+        {
+          "label": "Azure jobs",
+          "value": "Managed Identity",
+          "detail": "Role-based access writes and reads the required data."
+        },
+        {
+          "label": "External connector",
+          "value": "Out of band",
+          "detail": "Connector identities and credentials stay outside the public source."
+        },
+        {
+          "label": "Foundry",
+          "value": "Separate roles",
+          "detail": "Agent Consumer and model inference permissions are separate."
+        }
+      ],
+      "flow": [
+        "Browser can call only the review API",
+        "API accepts saved scenarios, not arbitrary prompts",
+        "Azure jobs use Managed Identity and data roles",
+        "Raw data stays out of the browser",
+        "External connector stays outside the public source",
+        "Foundry receives only safe evidence and citations",
+        "Public endpoint is rate-limited"
+      ],
+      "callout": "The public repository contains no Strategy connector credential. The production operator must apply the organization's approved identity and network controls.",
+      "links": [
+        {
+          "label": "Storage network security",
+          "href": "https://learn.microsoft.com/azure/storage/common/storage-network-security"
+        },
+        {
+          "label": "Key Vault RBAC",
+          "href": "https://learn.microsoft.com/azure/key-vault/general/rbac-guide"
+        },
+        {
+          "label": "Managed identities",
+          "href": "https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview"
+        }
+      ]
+    },
+    {
+      "slug": "azure-ai-costs",
+      "title": "Azure and AI costs",
+      "navLabel": "Azure + AI costs",
+      "eyebrow": "Keep the demo cheap",
+      "lead": "Storage is small. Monitoring, app compute, and live model use are the likely cost drivers. Practice mode makes no paid model call.",
+      "sources": [
+        "cost/README.md",
+        "cost/cost-to-run.md",
+        "cost/cost-at-scale.md"
+      ],
+      "facts": [
+        {
+          "label": "Budget alert",
+          "value": "USD 50/month",
+          "detail": "Alerts are a warning. They do not stop paid resources."
+        },
+        {
+          "label": "Storage",
+          "value": "Small demo set",
+          "detail": "Four current files, a manifest, and dated archives."
+        },
+        {
+          "label": "App compute",
+          "value": "Scale to zero",
+          "detail": "Container Apps stays small when the demo is idle."
+        },
+        {
+          "label": "AI",
+          "value": "Per live response",
+          "detail": "Practice is deterministic and creates no model charge."
+        }
+      ],
+      "visual": "costs",
+      "callout": "No measured monthly total is claimed on this page. Use Azure Cost Management to compare actual spend with this design.",
+      "links": [
+        {
+          "label": "Blob Storage pricing",
+          "href": "https://azure.microsoft.com/pricing/details/storage/blobs/"
+        },
+        {
+          "label": "Container Apps pricing",
+          "href": "https://azure.microsoft.com/pricing/details/container-apps/"
+        },
+        {
+          "label": "Azure Monitor pricing",
+          "href": "https://azure.microsoft.com/pricing/details/monitor/"
+        },
+        {
+          "label": "Microsoft Foundry model pricing",
+          "href": "https://azure.microsoft.com/pricing/details/ai-foundry-models/"
+        },
+        {
+          "label": "Azure Container Registry pricing",
+          "href": "https://azure.microsoft.com/pricing/details/container-registry/"
+        }
+      ]
+    },
+    {
+      "slug": "code-tour",
+      "title": "Foundry code tour",
+      "navLabel": "Code tour",
+      "eyebrow": "Follow one review from browser to model",
+      "lead": "Every source excerpt below comes from the current build. It shows what runs today and what changes when the real Strategy MCP model becomes available.",
+      "sources": [
+        "code-tour.md"
+      ],
+      "facts": [
+        {
+          "label": "Request type",
+          "value": "Saved scenario",
+          "detail": "The public API does not accept an arbitrary prompt."
+        },
+        {
+          "label": "Evidence",
+          "value": "Bounded",
+          "detail": "KPI contract, synthetic records, owner teams, and citations."
+        },
+        {
+          "label": "Live output",
+          "value": "Cited briefing",
+          "detail": "The API labels the provider and keeps source links."
+        },
+        {
+          "label": "MCP today",
+          "value": "Not required",
+          "detail": "The current UI works from the governed snapshot."
+        }
+      ],
+      "snippets": {
+        "frontend-request": {
+          "caption": "The browser starts one bounded review",
+          "file": "frontend/src/api.ts",
+          "start": "export async function runReview",
+          "end": null,
+          "language": "typescript"
+        },
+        "review-route": {
+          "caption": "The API combines saved records with the governed manifest",
+          "file": "backend/app/main.py",
+          "start": "@app.post(\"/api/reviews/run\"",
+          "end": "@app.get(",
+          "language": "python"
+        },
+        "provider-selection": {
+          "caption": "The API chooses Practice or live Foundry",
+          "file": "backend/app/briefings.py",
+          "start": "def create_briefing_provider()",
+          "end": "def _responses_url",
+          "language": "python"
+        },
+        "live-provider": {
+          "caption": "The backend calls the hosted Responses endpoint",
+          "file": "backend/app/briefings.py",
+          "start": "@dataclass",
+          "end": "def foundry_agent_endpoint",
+          "language": "python"
+        },
+        "agent-instructions": {
+          "caption": "The hosted agent keeps Strategy as the authority",
+          "file": "src/hpd-review-agent/main.py",
+          "start": "SYSTEM_INSTRUCTIONS =",
+          "end": "app = FastAPI",
+          "language": "python"
+        },
+        "agent-live-call": {
+          "caption": "The hosted agent calls the configured model and optional toolbox",
+          "file": "src/hpd-review-agent/main.py",
+          "start": "def _run_live_briefing",
+          "end": "def _response_payload",
+          "language": "python"
+        },
+        "response-parser": {
+          "caption": "The API extracts the assistant text from Responses",
+          "file": "backend/app/briefings.py",
+          "start": "def _response_text",
+          "end": "def _unique_citations",
+          "language": "python"
+        }
+      },
+      "callout": "The current path uses the governed snapshot. The MCP connection is prepared for the next step, but the target model is not exposed yet.",
+      "links": [
+        {
+          "label": "Strategy MCP setup source",
+          "href": "/docs/foundry-integration.html"
+        },
+        {
+          "label": "Security boundaries",
+          "href": "/docs/security-networking.html"
+        }
+      ]
+    }
+  ]
+}

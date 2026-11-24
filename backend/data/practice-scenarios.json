@@ -1,0 +1,199 @@
+{
+  "scenarios": [
+    {
+      "id": "winter-start",
+      "title": "Start of the review period",
+      "kind": "observed_snapshot",
+      "source_snapshot_date": "2026-01-15",
+      "simulated_review_date": "2026-01-15",
+      "buildings": [
+        {
+          "building_id": "BLD-101",
+          "label": "River Court",
+          "borough": "Bronx",
+          "service_area": "Bronx",
+          "owner_team": "Bronx Response Team",
+          "distinct_complaints": 3,
+          "complaint_window_days": 14,
+          "source_snapshot_date": "2026-01-15",
+          "violation": {
+            "violation_id": "V-101",
+            "status": "open",
+            "recorded_correct_by_date": "2026-01-05",
+            "classification": "approved_heat_or_hot_water"
+          }
+        },
+        {
+          "building_id": "BLD-102",
+          "label": "Harbor House",
+          "borough": "Brooklyn",
+          "service_area": "Brooklyn North",
+          "owner_team": "Brooklyn North Response Team",
+          "distinct_complaints": 4,
+          "complaint_window_days": 14,
+          "source_snapshot_date": "2026-01-15",
+          "violation": {
+            "violation_id": "V-102",
+            "status": "open",
+            "recorded_correct_by_date": "2026-01-20",
+            "classification": "approved_heat_or_hot_water"
+          }
+        },
+        {
+          "building_id": "BLD-103",
+          "label": "Pine Hall",
+          "borough": "Manhattan",
+          "service_area": "Manhattan West",
+          "owner_team": "Manhattan Housing Response Team",
+          "distinct_complaints": 5,
+          "complaint_window_days": 14,
+          "source_snapshot_date": "2026-01-15",
+          "violation": {
+            "violation_id": "V-103",
+            "status": "unknown",
+            "recorded_correct_by_date": null,
+            "classification": "needs_review"
+          }
+        },
+        {
+          "building_id": "BLD-104",
+          "label": "Cedar House",
+          "borough": "Queens",
+          "service_area": "Queens",
+          "owner_team": "Queens Response Team",
+          "distinct_complaints": 1,
+          "complaint_window_days": 14,
+          "source_snapshot_date": "2026-01-15",
+          "violation": {
+            "violation_id": "V-104",
+            "status": "open",
+            "recorded_correct_by_date": "2025-12-20",
+            "classification": "approved_heat_or_hot_water"
+          }
+        },
+        {
+          "building_id": "BLD-105",
+          "label": "Maple House",
+          "borough": "Brooklyn",
+          "service_area": "Brooklyn Heights",
+          "owner_team": "Brooklyn Heights Response Team",
+          "distinct_complaints": 2,
+          "complaint_window_days": 14,
+          "source_snapshot_date": "2026-01-15",
+          "violation": {
+            "violation_id": "V-105",
+            "status": "open",
+            "recorded_correct_by_date": "2026-01-08",
+            "classification": "approved_heat_or_hot_water"
+          }
+        }
+      ]
+    },
+    {
+      "id": "one-week-later",
+      "title": "One week later",
+      "kind": "synthetic_overlay",
+      "source_snapshot_date": "2026-01-15",
+      "simulated_review_date": "2026-01-22",
+      "buildings": [
+        {
+          "building_id": "BLD-101",
+          "label": "River Court",
+          "borough": "Bronx",
+          "service_area": "Bronx",
+          "owner_team": "Bronx Response Team",
+          "distinct_complaints": 4,
+          "complaint_window_days": 14,
+          "source_snapshot_date": "2026-01-15",
+          "violation": {
+            "violation_id": "V-101",
+            "status": "open",
+            "recorded_correct_by_date": "2026-01-05",
+            "classification": "approved_heat_or_hot_water"
+          }
+        },
+        {
+          "building_id": "BLD-102",
+          "label": "Harbor House",
+          "borough": "Brooklyn",
+          "service_area": "Brooklyn North",
+          "owner_team": "Brooklyn North Response Team",
+          "distinct_complaints": 4,
+          "complaint_window_days": 14,
+          "source_snapshot_date": "2026-01-15",
+          "violation": {
+            "violation_id": "V-102",
+            "status": "open",
+            "recorded_correct_by_date": "2026-01-20",
+            "classification": "approved_heat_or_hot_water"
+          }
+        },
+        {
+          "building_id": "BLD-103",
+          "label": "Pine Hall",
+          "borough": "Manhattan",
+          "service_area": "Manhattan West",
+          "owner_team": "Manhattan Housing Response Team",
+          "distinct_complaints": 5,
+          "complaint_window_days": 14,
+          "source_snapshot_date": "2026-01-15",
+          "violation": {
+            "violation_id": "V-103",
+            "status": "unknown",
+            "recorded_correct_by_date": null,
+            "classification": "needs_review"
+          }
+        },
+        {
+          "building_id": "BLD-104",
+          "label": "Cedar House",
+          "borough": "Queens",
+          "service_area": "Queens",
+          "owner_team": "Queens Response Team",
+          "distinct_complaints": 2,
+          "complaint_window_days": 14,
+          "source_snapshot_date": "2026-01-15",
+          "violation": {
+            "violation_id": "V-104",
+            "status": "open",
+            "recorded_correct_by_date": "2025-12-20",
+            "classification": "approved_heat_or_hot_water"
+          }
+        },
+        {
+          "building_id": "BLD-105",
+          "label": "Maple House",
+          "borough": "Brooklyn",
+          "service_area": "Brooklyn Heights",
+          "owner_team": "Brooklyn Heights Response Team",
+          "distinct_complaints": 2,
+          "complaint_window_days": 14,
+          "source_snapshot_date": "2026-01-15",
+          "violation": {
+            "violation_id": "V-105",
+            "status": "closed",
+            "recorded_correct_by_date": "2026-01-08",
+            "correction_recorded_date": "2026-01-19",
+            "classification": "approved_heat_or_hot_water"
+          }
+        },
+        {
+          "building_id": "BLD-106",
+          "label": "Atlantic House",
+          "borough": "Brooklyn",
+          "service_area": "Brooklyn Heights",
+          "owner_team": "Brooklyn Heights Response Team",
+          "distinct_complaints": 3,
+          "complaint_window_days": 14,
+          "source_snapshot_date": "2026-01-15",
+          "violation": {
+            "violation_id": "V-106",
+            "status": "open",
+            "recorded_correct_by_date": "2026-01-10",
+            "classification": "approved_heat_or_hot_water"
+          }
+        }
+      ]
+    }
+  ]
+}
